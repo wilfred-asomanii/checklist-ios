@@ -8,17 +8,17 @@
 
 import UIKit
 
-class CheckListViewController: UITableViewController {
+class CheckListViewController: UITableViewController, AddItemViewControllerDelegate {
     
     // MARK:- IBOutlets
     
 
     // MARK:- instance variables/properties
     var items = [CheckListItem(title: "Naruto", isChecked: false),
-                 CheckListItem(title: "Black Widow", isChecked: true),
+                 CheckListItem(title: "Black Widow", isChecked: false),
                  CheckListItem(title: "Zendaya ❤️", isChecked: true),
-                 CheckListItem(title: "Rocket", isChecked: true),
-                 CheckListItem(title: "Hulk", isChecked: true),]
+                 CheckListItem(title: "Rocket", isChecked: false),
+                 CheckListItem(title: "Hulk", isChecked: false),]
     
     // MARK:- view controller methods
     override func viewDidLoad() {
@@ -26,6 +26,16 @@ class CheckListViewController: UITableViewController {
         
         editButtonItem.tintColor = .systemPurple
         navigationItem.leftBarButtonItem = editButtonItem
+    }
+
+    // MARK: Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // this method is called right before a seque navigation.
+        // use it to pass data to the next screen
+        if segue.identifier == "AddItemSegue" {
+            let controller = segue.destination as! AddItemTableViewController
+            controller.addItemDelegate = self
+        }
     }
     
     // MARK:- table view methods
@@ -60,14 +70,21 @@ class CheckListViewController: UITableViewController {
         // index path is already supplied by this method
         tableView.deleteRows(at: [indexPath], with: .automatic) // delete row
     }
+
+    // MARK:- add item view controller delegates
+
+    func addItemViewControllerDidCancel(_ controller: AddItemTableViewController) {
+        navigationController?.popViewController(animated: true)
+    }
+
+    func addItemViewController(_ controller: AddItemTableViewController, addedItem item: CheckListItem) {
+        navigationController?.popViewController(animated: true)
+        let indexPath = IndexPath(row: items.count, section: 0)
+        items.append(item)
+        tableView.insertRows(at: [indexPath], with: .automatic)
+    }
     
     // MARK:- IBActions
-    @IBAction func addItem() {
-        let indexPath = IndexPath(row: items.count, section: 0) // create with the to be index of the new item (the current item size)
-        let item = CheckListItem(title: "Chris Pratt", isChecked: true) // create the item
-        items.append(item) // add the item to the list. Do this after you've created the indexpath for the new item
-        tableView.insertRows(at: [indexPath], with: .automatic) // insert the row/item
-    }
     
     // MARK:- member functions
     func configureCheckMark(for cell: UITableViewCell, with item: CheckListItem) {
