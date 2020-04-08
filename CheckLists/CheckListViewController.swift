@@ -10,31 +10,22 @@ import UIKit
 
 class CheckListViewController: UITableViewController {
     
+    // MARK:- IBOutlets
+    
+
     // MARK:- instance variables/properties
-    let items = [CheckListItem(title: "Naruto", isChecked: false),
+    var items = [CheckListItem(title: "Naruto", isChecked: false),
                  CheckListItem(title: "Black Widow", isChecked: true),
-                 CheckListItem(title: "Bleach", isChecked: true),
-                 CheckListItem(title: "Interstellar", isChecked: false),
-                 CheckListItem(title: "Inception", isChecked: false),
-                 CheckListItem(title: "Avengers", isChecked: true),
-                 CheckListItem(title: "Spiderman", isChecked: true),
                  CheckListItem(title: "Zendaya ❤️", isChecked: true),
-                 CheckListItem(title: "Captain America", isChecked: false),
-                 CheckListItem(title: "Black Panther", isChecked: true),
-                 CheckListItem(title: "Scarlet Witch", isChecked: true),
-                 CheckListItem(title: "Thanos", isChecked: false),
-                 CheckListItem(title: "Thor", isChecked: false),
-                 CheckListItem(title: "Star Lord", isChecked: true),
-                 CheckListItem(title: "Gamora", isChecked: true),
-                 CheckListItem(title: "Groot", isChecked: false),
                  CheckListItem(title: "Rocket", isChecked: true),
                  CheckListItem(title: "Hulk", isChecked: true),]
     
     // MARK:- view controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        editButtonItem.tintColor = .systemPurple
+        navigationItem.leftBarButtonItem = editButtonItem
     }
     
     // MARK:- table view methods
@@ -62,6 +53,20 @@ class CheckListViewController: UITableViewController {
             configureCheckMark(for: cell, with: item)
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        items.remove(at: indexPath.row) // remove from list first
+        // index path is already supplied by this method
+        tableView.deleteRows(at: [indexPath], with: .automatic) // delete row
+    }
+    
+    // MARK:- IBActions
+    @IBAction func addItem() {
+        let indexPath = IndexPath(row: items.count, section: 0) // create with the to be index of the new item (the current item size)
+        let item = CheckListItem(title: "Chris Pratt", isChecked: true) // create the item
+        items.append(item) // add the item to the list. Do this after you've created the indexpath for the new item
+        tableView.insertRows(at: [indexPath], with: .automatic) // insert the row/item
     }
     
     // MARK:- member functions
