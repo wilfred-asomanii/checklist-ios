@@ -8,8 +8,15 @@
 
 import UIKit
 
-class AddItemTableViewController: UITableViewController {
+/// this controller's table view is static instead of having dynamic content similar to the main screen
+/// cos of this, we don't need a datasource here. we can also directly access the cell contents using outlets
+class AddItemTableViewController: UITableViewController, UITextFieldDelegate {
 
+    // MARK:- IBOutlets
+    @IBOutlet weak var doneBarButton: UIBarButtonItem!
+    @IBOutlet weak var nameTextField: UITextField!
+
+    // MARK:- view controller delegates
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -20,25 +27,46 @@ class AddItemTableViewController: UITableViewController {
         // navigationItem.largeTitleDisplayMode = .never
     }
 
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // this will autofocus on the text field
+        nameTextField?.becomeFirstResponder()
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+    // MARK:- Table view delegates
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        // returning nil in this method disables selection for the particular indexPath
+        // the cell will briefly be highlighted though.
+        return nil
     }
-    
+
+    // MARK:- TextField delegates
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+
+        let oldText = textField.text!
+        let editRange = Range(range, in: oldText)!
+        let newText = oldText.replacingCharacters(in: editRange, with: string)
+        doneBarButton.isEnabled = !newText.isEmpty
+        return true
+    }
+
+    // triggered by the clear button on the text field
+    // cos the clear button does not call textField(_:shouldChangeCharactersIn:replacementString)
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        doneBarButton.isEnabled = false
+        return true
+    }
+
     // MARK:- IBActions
     @IBAction func cancel() {
         navigationController?.popViewController(animated: true)
     }
     
     @IBAction func done() {
-        navigationController?.popViewController(animated: true)
+        let alert = UIAlertController(title: "What you entered", message: "The text you entered is \(nameTextField.text!)", preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default, handler: { _ in self.navigationController?.popViewController(animated: true)})
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
     }
 
 }

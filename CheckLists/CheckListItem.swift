@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CheckListItem.swift
 //  CheckLists
 //
 //  Created by Wilfred Asomani on 07/04/2020.
