@@ -10,19 +10,21 @@ import UIKit
 
 class CheckListViewController: UITableViewController, ItemViewControllerDelegate {
     
-    // MARK:- IBOutlets
-    
 
     // MARK:- instance variables/properties
     var items = [CheckListItem]()
+    var checklist: CheckListItem?
     
     // MARK:- view controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        editButtonItem.tintColor = .systemPurple
-        navigationItem.leftBarButtonItem = editButtonItem
-
+        navigationItem.rightBarButtonItems?.append(editButtonItem)
+        guard let checklist = checklist else {
+            navigationController?.popViewController(animated: true)
+            return
+        }
+        title = checklist.title
         loadCheckLists()
     }
 
@@ -77,6 +79,18 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
         saveChecklistItems()
     }
 
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let editAction = UIContextualAction(style: .normal, title: "Edit", handler: {action, view, handler in
+            self.swipeActionTapped(action: action, view: view, handler: handler, indexPath: indexPath)
+        })
+        editAction.backgroundColor = .systemPurple
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete", handler: {action, view, handler in
+            self.swipeActionTapped(action: action, view: view, handler: handler, indexPath: indexPath)
+        })
+
+        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+    }
+
     // MARK:- add item view controller delegates
 
     func itemViewControllerDidCancel(_ controller: ItemViewController) {
@@ -122,6 +136,19 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
         }
     }
 
+    func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
+        let title = action.title ?? ""
+
+        if title == "Edit" {
+            performSegue(withIdentifier: "EditItemSegue", sender: tableView.cellForRow(at: indexPath))
+        } else if title == "Delete" {
+            items.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            saveChecklistItems()
+        }
+        handler(true)
+    }
+
     func saveChecklistItems() {
         let encoder = PropertyListEncoder()
         do {
@@ -137,14 +164,14 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
         // try? data?.write(to: dataFilePath())
     }
 
-    func documentsDirectory() -> URL {
-        let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
-        return path[0]
-    }
-
-    func dataFilePath() -> URL {
-        return documentsDirectory().appendingPathComponent("CheckList.plist")
-    }
+//    func documentsDirectory() -> URL {
+//        let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//
+//        return path[0]
+//    }
+//
+//    func dataFilePath() -> URL {
+//        return documentsDirectory().appendingPathComponent("CheckList.plist")
+//    }
 }
 

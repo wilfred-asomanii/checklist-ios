@@ -16,9 +16,11 @@ class CheckListItem: NSObject, Codable {
     var title: String
     var isChecked: Bool
     
-    internal init(title: String, isChecked: Bool) {
+    internal init(title: String, isChecked: Bool = false) {
         self.title = title
         self.isChecked = isChecked
+
+        super.init()
     }
     
     func toggleChecked() {
