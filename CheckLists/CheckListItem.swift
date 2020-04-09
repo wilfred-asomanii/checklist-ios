@@ -8,7 +8,8 @@
 
 import Foundation
 
-class CheckListItem {
+class CheckListItem: NSObject {
+
     var title: String
     var isChecked: Bool
     
