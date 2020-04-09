@@ -32,10 +32,12 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
         // use it to pass data to the next screen
         // the sender parameter here is the basically what trigured the segue
         if segue.identifier == "AddItemSegue" {
-            let controller = segue.destination as! ItemViewController
+            let navController = segue.destination as! UINavigationController
+            let controller = navController.topViewController as! ItemViewController
             controller.itemViewDelegate = self
         } else if segue.identifier == "EditItemSegue" {
-            let controller = segue.destination as! ItemViewController
+            let navController = segue.destination as! UINavigationController
+            let controller = navController.topViewController as! ItemViewController
             controller.itemViewDelegate = self
             // in this case, the triger of the segue is a cell
             if let indexPath = tableView.indexPath(for: sender as! UITableViewCell) {
@@ -79,12 +81,7 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
 
     // MARK:- add item view controller delegates
 
-    func itemViewControllerDidCancel(_ controller: ItemViewController) {
-        navigationController?.popViewController(animated: true)
-    }
-
     func itemViewController(_ controller: ItemViewController, editedItem item: CheckListItem) {
-        navigationController?.popViewController(animated: true)
 
         if let index = items.firstIndex(of: item) {
             if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) {
@@ -95,7 +92,6 @@ class CheckListViewController: UITableViewController, ItemViewControllerDelegate
     }
 
     func itemViewController(_ controller: ItemViewController, addedItem item: CheckListItem) {
-        navigationController?.popViewController(animated: true)
         let indexPath = IndexPath(row: items.count, section: 0)
         items.append(item)
         tableView.insertRows(at: [indexPath], with: .automatic)
