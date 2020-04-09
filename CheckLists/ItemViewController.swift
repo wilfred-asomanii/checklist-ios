@@ -11,7 +11,6 @@ import UIKit
 // protocols are similar to interfaces in Java
 // : class means only classes can use this protocol
 protocol ItemViewControllerDelegate: class {
-    func itemViewControllerDidCancel(_ controller: ItemViewController)
     func itemViewController(_ controller: ItemViewController, addedItem item: CheckListItem)
     func itemViewController(_ controller: ItemViewController, editedItem item: CheckListItem)
 }
@@ -72,16 +71,18 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK:- IBActions
     @IBAction func cancel() {
-        itemViewDelegate?.itemViewControllerDidCancel(self)
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func done() {
         //                if let item = itemToEdit {
         //                    item.title = nameTextField?.text ?? ""
         //                    itemViewDelegate?.itemViewController(self, editedItem: item)
+        //         dismiss(animated: true, completion: nil)
         //                } else {
         //                let item = CheckListItem(title: nameTextField?.text ?? "", isChecked: false)
         //                itemViewDelegate?.itemViewController(self, addedItem: item)
+        //        dismiss(animated: true, completion: nil)
         //            }
 
         // OR
@@ -89,11 +90,13 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
             // itemToEdit is nil
             let addedItem = CheckListItem(title: nameTextField?.text ?? "", isChecked: false)
             itemViewDelegate?.itemViewController(self, addedItem: addedItem)
+            dismiss(animated: true, completion: nil)
             return
         }
         // itemToEdit is not nil
         item.title = nameTextField?.text ?? ""
         itemViewDelegate?.itemViewController(self, editedItem: item)
+        dismiss(animated: true, completion: nil)
     }
 
 }
