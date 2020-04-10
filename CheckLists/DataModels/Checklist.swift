@@ -13,11 +13,13 @@ import Foundation
 // similar to NSCoder which xcode uses to write storyboards to file and ios uses to load app's story board
 class Checklist: NSObject, Codable {
     var title: String
+    var iconName: String
     var items: [ChecklistItem]
 
-    internal init(title: String, listItems: [ChecklistItem] = []) {
+    internal init(title: String, iconName: String = "No Icon", listItems: [ChecklistItem] = []) {
         self.title = title
         self.items = listItems
+        self.iconName = iconName
 
         super.init()
     }

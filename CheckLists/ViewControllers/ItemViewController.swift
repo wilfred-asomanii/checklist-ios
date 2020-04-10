@@ -47,8 +47,6 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK:- Table view delegates
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        // returning nil in this method disables selection for the particular indexPath
-        // the cell will briefly be highlighted though.
         return nil
     }
 

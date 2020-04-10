@@ -41,6 +41,14 @@ class DataModel {
         return checklists
     }
 
+    func sortChecklists() {
+        checklists.sort() { list1, list2 in
+            // compare 2 strings in a case agnostic way
+            // also compare based on locale (sorting english can be diff from sorting german
+            return list1.title.localizedCompare(list2.title) == .orderedAscending
+        }
+    }
+
     func registerDefaults() {
         let defaults = ["ChecklistIndex": -1, "FirstTime": true] as [String: Any]
         UserDefaults.standard.register(defaults: defaults)

@@ -13,13 +13,15 @@ protocol ListDetailDelegate: class {
 
 import UIKit
 
-class ListDetailViewController: UITableViewController, UITextFieldDelegate {
+class ListDetailViewController: UITableViewController, UITextFieldDelegate, IconPickerViewControllerDelegate {
 
     @IBOutlet weak var titleTextField: UITextField?
     @IBOutlet weak var doneBarButton: UIBarButtonItem?
+    @IBOutlet weak var iconCell: UITableViewCell!
 
     weak var delegate: ListDetailDelegate?
     var checklist: Checklist?
+    var iconName = "No Icon"
 
     // MARK:- view controller methods
     override func viewDidLoad() {
@@ -28,6 +30,18 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
         if let checklist = checklist {
             title = "Edit Item"
             titleTextField?.text = checklist.title
+            iconName = checklist.iconName
+        }
+        iconCell.imageView?.image = UIImage(named: iconName)?.withTintColor(.systemPurple)
+        iconCell.textLabel?.text = iconName
+
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+        if segue.identifier == "pickIconSegue" {
+            let controller = segue.destination as? IconPickerViewController
+            controller?.pickerDelegate = self
         }
     }
 
@@ -38,7 +52,12 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
 
     // MARK:- table view methods
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return nil
+        print(indexPath)
+        return indexPath.section == 0 ? nil : indexPath
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     // MARK:- text field delegate methods
@@ -55,6 +74,15 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
         return true
     }
 
+    // MARK:- icon picker delegate
+    func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
+        checklist?.iconName = iconName
+        self.iconName = iconName
+        iconCell.imageView?.image = UIImage(named: iconName)?.withTintColor(.systemPurple)
+        iconCell.textLabel?.text = iconName
+        navigationController?.popViewController(animated: true)
+    }
+
     // MARK:- IBActions
     @IBAction func cancel(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
@@ -62,7 +90,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
 
     @IBAction func done(_ sender: Any) {
         guard let checklist = checklist else {
-            delegate?.listDetailView(self, addedChecklist: Checklist(title: titleTextField?.text ?? ""))
+            delegate?.listDetailView(self, addedChecklist: Checklist(title: titleTextField?.text ?? "", iconName: iconName))
             dismiss(animated: true, completion: nil)
             return
         }

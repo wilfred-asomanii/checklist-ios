@@ -19,8 +19,7 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentier)
-
+        //        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentier)
         navigationItem.leftBarButtonItem = editButtonItem
     }
 
@@ -72,8 +71,12 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentier, for: indexPath)
-
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentier) else {
+            let newCell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentier)
+            newCell.accessoryType = .disclosureIndicator
+            configureCheckMarkNText(for: newCell, with: dataModel.checklists[indexPath.row])
+            return newCell
+        }
         cell.accessoryType = .disclosureIndicator
         configureCheckMarkNText(for: cell, with: dataModel.checklists[indexPath.row])
 
@@ -135,12 +138,33 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
 
     // MARK:- member functions
     func configureCheckMarkNText(for cell: UITableViewCell, with item: Checklist) {
-
         cell.textLabel?.text = item.title
-        cell.detailTextLabel?.text = "Has a number of items"
+        cell.imageView?.image = UIImage(named: item.iconName)?.withTintColor(.systemPurple)
+
+        // the function parameter can be written outside the paretheses
+        let count = item.items.filter() { it in
+            return !it.isChecked
+        }.count
+        // reduce is used to return a combined value from an list eg: sum, string concat
+        let size = item.items.reduce(0) { cnt, item in
+            cnt + (item.isChecked ? 0 : 1)
+        }
+        
+        print("count:", count, "size:", size)
+
+        switch count {
+        case let x where x == 0 && item.items.count > 0:
+            cell.detailTextLabel?.text = "All done 🎊!"
+        case let x where x == 0 && item.items.count == 0:
+            cell.detailTextLabel?.text = "Nothing to do 🤦🏽‍♂️"
+        case let x where x < 3:
+            cell.detailTextLabel?.text = "Almost there! 😬"
+        default:
+            cell.detailTextLabel?.text = "\(count) things remain 🥺"
+        }
     }
 
-    func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
+    func swipeActionTapped(action: UIContextualAction, view: UIView, handler: (Bool) -> Void, indexPath: IndexPath) {
         let title = action.title ?? ""
 
         if title == "Edit" {
