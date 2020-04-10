@@ -77,6 +77,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		43964FB52440A909007AFB04 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		43FD7EAF243CC52C006FAAB1 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +103,7 @@
 		43FD7EBA243CC52D006FAAB1 /* CheckLists */ = {
 			isa = PBXGroup;
 			children = (
+				43964FB52440A909007AFB04 /* utils */,
 				4384B23B24402158000A5CED /* Resources */,
 				4384B23A2440213C000A5CED /* DataModels */,
 				4384B23924402125000A5CED /* ViewControllers */,

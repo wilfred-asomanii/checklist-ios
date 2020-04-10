@@ -76,6 +76,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
 
     // MARK:- icon picker delegate
     func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
+        doneBarButton?.isEnabled = true
         checklist?.iconName = iconName
         self.iconName = iconName
         iconCell.imageView?.image = UIImage(named: iconName)?.withTintColor(.systemPurple)

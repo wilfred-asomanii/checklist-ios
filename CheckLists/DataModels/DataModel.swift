@@ -56,7 +56,7 @@ class DataModel {
 
     func handleFirstTime() {
         if UserDefaults.standard.bool(forKey: "FirstTime") {
-            checklists.append(Checklist(title: "To Do"))
+            checklists.append(Checklist(title: "To Do", iconName: "Appointments"))
             prevSelectedIndex = 0
             UserDefaults.standard.set(false, forKey: "FirstTime")
             UserDefaults.standard.synchronize()
