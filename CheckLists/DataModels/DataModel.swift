@@ -10,9 +10,20 @@ import Foundation
 
 class DataModel {
     var checklists = [Checklist]()
+    var prevSelectedIndex: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "ChecklistIndex")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "ChecklistIndex")
+            //            UserDefaults.standard.synchronize() // this forces userDefaults to persist to disk immediately its updated
+        }
+    }
 
     init() {
-        let _ = loadData()
+        _ = loadData()
+        registerDefaults()
+        handleFirstTime()
     }
 
     func saveData() {
@@ -28,6 +39,20 @@ class DataModel {
         }
 
         return checklists
+    }
+
+    func registerDefaults() {
+        let defaults = ["ChecklistIndex": -1, "FirstTime": true] as [String: Any]
+        UserDefaults.standard.register(defaults: defaults)
+    }
+
+    func handleFirstTime() {
+        if UserDefaults.standard.bool(forKey: "FirstTime") {
+            checklists.append(Checklist(title: "To Do"))
+            prevSelectedIndex = 0
+            UserDefaults.standard.set(false, forKey: "FirstTime")
+            UserDefaults.standard.synchronize()
+        }
     }
 
     func documentsDirectory() -> URL {

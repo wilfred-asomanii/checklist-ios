@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AllListsViewController: UITableViewController, ListDetailDelegate {
+class AllListsViewController: UITableViewController, ListDetailDelegate, UINavigationControllerDelegate {
 
     // MARK:- variables
     let cellIdentier = "list-cell"
@@ -22,6 +22,21 @@ class AllListsViewController: UITableViewController, ListDetailDelegate {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentier)
 
         navigationItem.leftBarButtonItem = editButtonItem
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        navigationController?.delegate = self
+
+        let prevIndex = dataModel.prevSelectedIndex
+        guard prevIndex >= 0, prevIndex < dataModel.checklists.count else { return }
+        performSegue(withIdentifier: "showChecklistSegue", sender: dataModel.checklists[prevIndex])
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -41,7 +56,15 @@ class AllListsViewController: UITableViewController, ListDetailDelegate {
         }
     }
 
-    // MARK: - Table view data source / delegates
+    // MARK:- navigation controller delegates
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        // this method is called before viewDidAppear(_:animated:)
+        if viewController === self {
+            dataModel.prevSelectedIndex = -1
+        }
+    }
+
+    // MARK:- Table view data source / delegates
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
@@ -58,6 +81,8 @@ class AllListsViewController: UITableViewController, ListDetailDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        dataModel.prevSelectedIndex = indexPath.row
 
         performSegue(withIdentifier: "showChecklistSegue", sender: dataModel.checklists[indexPath.row])
         /*

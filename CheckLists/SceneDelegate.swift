@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
 
-        let _ = dataModel.loadData()
+        _ = dataModel.loadData()
         let controller = window?.rootViewController as? UINavigationController
         let allListsView = controller?.viewControllers.first as? AllListsViewController
         allListsView?.dataModel = dataModel
