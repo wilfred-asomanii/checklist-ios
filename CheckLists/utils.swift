@@ -8,12 +8,3 @@
 
 import Foundation
 
-func documentsDirectory() -> URL {
-    let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
-    return path[0]
-}
-
-func dataFilePath() -> URL {
-    return documentsDirectory().appendingPathComponent("CheckList.plist")
-}

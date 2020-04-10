@@ -11,8 +11,8 @@ import UIKit
 // protocols are similar to interfaces in Java
 // : class means only classes can use this protocol
 protocol ItemViewControllerDelegate: class {
-    func itemViewController(_ controller: ItemViewController, addedItem item: CheckListItem)
-    func itemViewController(_ controller: ItemViewController, editedItem item: CheckListItem)
+    func itemViewController(_ controller: ItemViewController, addedItem item: ChecklistItem)
+    func itemViewController(_ controller: ItemViewController, editedItem item: ChecklistItem)
 }
 
 /// this controller's table view is static instead of having dynamic content similar to the main screen
@@ -27,7 +27,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     weak var itemViewDelegate: ItemViewControllerDelegate?
 
     // MARK:- member variables
-    var itemToEdit: CheckListItem?
+    var itemToEdit: ChecklistItem?
 
     // MARK:- view controller delegates
     override func viewDidLoad() {
@@ -80,7 +80,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
         //                    itemViewDelegate?.itemViewController(self, editedItem: item)
         //         dismiss(animated: true, completion: nil)
         //                } else {
-        //                let item = CheckListItem(title: nameTextField?.text ?? "", isChecked: false)
+        //                let item = ChecklistItem(title: nameTextField?.text ?? "", isChecked: false)
         //                itemViewDelegate?.itemViewController(self, addedItem: item)
         //        dismiss(animated: true, completion: nil)
         //            }
@@ -88,7 +88,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
         // OR
         guard let item = itemToEdit else {
             // itemToEdit is nil
-            let addedItem = CheckListItem(title: nameTextField?.text ?? "", isChecked: false)
+            let addedItem = ChecklistItem(title: nameTextField?.text ?? "", isChecked: false)
             itemViewDelegate?.itemViewController(self, addedItem: addedItem)
             dismiss(animated: true, completion: nil)
             return
