@@ -81,9 +81,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         checklist?.iconName = iconName
         self.iconName = iconName
 
-        // alwayTemplate redering mode allows image tint to be changed regardless of the original image colors
-        // this can also be changed in the Asset's attributes
-//        iconCell.imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
+        iconCell.imageView?.image = UIImage(named: iconName)
         iconCell.imageView?.tintColor = .systemPurple
         iconCell.textLabel?.text = iconName
         navigationController?.popViewController(animated: true)

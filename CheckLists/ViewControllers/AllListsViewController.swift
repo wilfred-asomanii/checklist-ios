@@ -227,16 +227,18 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         let initialtext =   item.title
         let attrString: NSMutableAttributedString = NSMutableAttributedString(string: initialtext)
 
-        let range: NSRange = (initialtext as NSString).localizedStandardRange(of: searchController.searchBar.text ?? "")
+        var ranges: [Range<String.Index>] = []
+        while ranges.last.map({ $0.upperBound < initialtext.endIndex}) ?? true,
+            let range = initialtext.range(of: searchController.searchBar.text ?? "", options: .caseInsensitive, range: (ranges.last?.upperBound ?? initialtext.startIndex)..<initialtext.endIndex, locale: .current) {
+            ranges.append(range)
+        }
 
-
-        attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: range)
-        attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 25), range: range)
-
+        for r in ranges {
+            attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: NSRange(r, in: initialtext))
+            attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: NSRange(r, in: initialtext))
+        }
 
         cell.textLabel?.attributedText = attrString
-
-        //        cell.textLabel?.text = item.title
         cell.imageView?.image = UIImage(named: item.iconName)
         cell.imageView?.tintColor = .systemPurple
 
