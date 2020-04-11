@@ -52,7 +52,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
 
     // MARK:- table view methods
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        print(indexPath)
+
         return indexPath.section == 0 ? nil : indexPath
     }
 

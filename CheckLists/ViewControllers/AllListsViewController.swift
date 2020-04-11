@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class AllListsViewController: UITableViewController, ListDetailDelegate, UINavigationControllerDelegate, UISearchResultsUpdating {
 
@@ -39,12 +40,12 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadSections([0], with: .automatic)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
+        tableView.reloadSections([0], with: .automatic)
         navigationController?.delegate = self
 
         let prevIndex = dataModel.prevSelectedIndex
@@ -57,6 +58,7 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             let controller = segue.destination as! ChecklistViewController
             if let checklist = sender as? Checklist {
                 controller.checklist = checklist
+                controller.dataModel = dataModel
             }
         } else if segue.identifier == "listDetailSegue" {
             let navController = segue.destination as! UINavigationController
@@ -92,7 +94,6 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
 
         let searchText = searchController.searchBar.text ?? ""
         searchMatches = dataModel.checklists.filter { list in
-            print(list.title.lowercased().contains(searchText.lowercased()))
             return list.title.lowercased().contains(searchText.lowercased())
         }
 
@@ -151,6 +152,10 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
 
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+
     // MARK:- list detail delegates
     func listDetailView(_ viewController: ListDetailViewController, editedChecklist list: Checklist) {
         navigationController?.popViewController(animated: true)
@@ -171,7 +176,6 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
 
     // MARK:- member functions
     func configureCheckMarkNText(for cell: UITableViewCell, with item: Checklist) {
-
         let initialtext =   item.title
         let attrString: NSMutableAttributedString = NSMutableAttributedString(string: initialtext)
 
@@ -215,7 +219,13 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         if title == "Edit" {
             performSegue(withIdentifier: "listDetailSegue", sender: indexPath)
         } else if title == "Delete" {
-            dataModel.checklists.remove(at: indexPath.row)
+            let deletedList = dataModel.checklists.remove(at: indexPath.row)
+            for item in deletedList.items {
+                if item.shouldRemind {
+                    item.shouldRemind = false
+                    dataModel.toggleNotification(for: item)
+                }
+            }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         handler(true)
