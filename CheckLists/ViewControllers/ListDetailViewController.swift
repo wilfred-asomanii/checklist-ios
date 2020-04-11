@@ -32,7 +32,8 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
             titleTextField?.text = checklist.title
             iconName = checklist.iconName
         }
-        iconCell.imageView?.image = UIImage(named: iconName)?.withTintColor(.systemPurple)
+        iconCell.imageView?.image = UIImage(named: iconName)
+        iconCell.imageView?.tintColor = .systemPurple
         iconCell.textLabel?.text = iconName
 
     }
@@ -79,7 +80,11 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         doneBarButton?.isEnabled = true
         checklist?.iconName = iconName
         self.iconName = iconName
-        iconCell.imageView?.image = UIImage(named: iconName)?.withTintColor(.systemPurple)
+
+        // alwayTemplate redering mode allows image tint to be changed regardless of the original image colors
+        // this can also be changed in the Asset's attributes
+//        iconCell.imageView?.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
+        iconCell.imageView?.tintColor = .systemPurple
         iconCell.textLabel?.text = iconName
         navigationController?.popViewController(animated: true)
     }

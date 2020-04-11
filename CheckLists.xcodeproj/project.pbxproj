@@ -13,7 +13,6 @@
 		43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B64F50243D4BEB00D313EA /* ItemViewController.swift */; };
 		43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */; };
 		43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */; };
-		43FD7EBE243CC52D006FAAB1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBD243CC52D006FAAB1 /* SceneDelegate.swift */; };
 		43FD7EC0243CC52D006FAAB1 /* ChecklistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBF243CC52D006FAAB1 /* ChecklistViewController.swift */; };
 		43FD7EC3243CC52D006FAAB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FD7EC1243CC52D006FAAB1 /* Main.storyboard */; };
 		43FD7EC5243CC52F006FAAB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43FD7EC4243CC52F006FAAB1 /* Assets.xcassets */; };
@@ -28,7 +27,6 @@
 		43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerViewController.swift; sourceTree = "<group>"; };
 		43FD7EB8243CC52D006FAAB1 /* CheckLists.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheckLists.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		43FD7EBD243CC52D006FAAB1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		43FD7EBF243CC52D006FAAB1 /* ChecklistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistViewController.swift; sourceTree = "<group>"; };
 		43FD7EC2243CC52D006FAAB1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		43FD7EC4243CC52F006FAAB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -109,7 +107,6 @@
 				4384B23924402125000A5CED /* ViewControllers */,
 				43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */,
 				43FD7EC9243CC52F006FAAB1 /* Info.plist */,
-				43FD7EBD243CC52D006FAAB1 /* SceneDelegate.swift */,
 			);
 			path = CheckLists;
 			sourceTree = "<group>";
@@ -190,7 +187,6 @@
 				43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */,
 				43FD7ED0243CDDE6006FAAB1 /* Checklist.swift in Sources */,
 				43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */,
-				43FD7EBE243CC52D006FAAB1 /* SceneDelegate.swift in Sources */,
 				437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */,
 				437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */,
 			);
@@ -331,6 +327,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V3BQ2BLJ8C;
 				INFOPLIST_FILE = CheckLists/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -349,6 +346,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = V3BQ2BLJ8C;
 				INFOPLIST_FILE = CheckLists/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

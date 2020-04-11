@@ -237,7 +237,8 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         cell.textLabel?.attributedText = attrString
 
         //        cell.textLabel?.text = item.title
-        cell.imageView?.image = UIImage(named: item.iconName)?.withTintColor(.systemPurple)
+        cell.imageView?.image = UIImage(named: item.iconName)
+        cell.imageView?.tintColor = .systemPurple
 
         // the function parameter can be written outside the paretheses
         let count = item.items.filter() { it in

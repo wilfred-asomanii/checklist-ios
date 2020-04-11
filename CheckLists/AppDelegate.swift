@@ -10,26 +10,68 @@ import UIKit
 import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+
+    var window: UIWindow?
+    let dataModel = DataModel()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+
+        //        let content = UNMutableNotificationContent()
+        //        content.title = "test"
+        //        content.body = "asdsadasdsadsdsadsd"
+        //        content.sound = .default
+        //        content.userInfo = ["itemID": 5, "listID": 4]
+        //
+        //        let request = UNNotificationRequest(identifier: "asd", content: content, trigger: nil)
+        //        center.add(request, withCompletionHandler: nil)
+
+
+        _ = dataModel.loadData()
+        let controller = window?.rootViewController as? UINavigationController
+        let allListsView = controller?.viewControllers.first as? AllListsViewController
+        allListsView?.dataModel = dataModel
+
         return true
     }
 
-    // MARK: UISceneSession Lifecycle
-
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        saveData()
     }
 
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+    func applicationWillTerminate(_ application: UIApplication) {
+        saveData()
+    }
+
+    // MARK:- user notification delegates
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler(.alert)
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+
+        let userInfo = response.notification.request.content.userInfo
+        guard let itemID = userInfo["itemID"], let listID = userInfo["listID"] else {
+            completionHandler()
+            return
+        }
+
+        let controller = window?.rootViewController as? UINavigationController
+        let allListsView = controller?.viewControllers.first as? AllListsViewController
+        allListsView?.notificationTapped(for: itemID as! Int, inList: listID as! Int)
+
+        completionHandler()
+    }
+
+
+    // MARK:- helper methods
+    func saveData() {
+        dataModel.saveData()
     }
 }
 

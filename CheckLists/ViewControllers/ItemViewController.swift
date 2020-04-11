@@ -155,7 +155,12 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
         let pickerPath = IndexPath(row: 2, section: 1)
         isDatePickerVisible = false
         tableView.deleteRows(at: [pickerPath], with: .fade)
-        dateLabel.textColor = .label
+        if #available(iOS 13.0, *) {
+            dateLabel.textColor = .label
+        } else {
+            // Fallback on earlier versions
+            dateLabel.textColor = .black
+        }
     }
 
     // MARK:- IBActions

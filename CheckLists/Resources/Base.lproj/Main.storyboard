@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vDV-8T-RCd">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -114,11 +115,8 @@
                                                     <rect key="frame" x="255" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </switch>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bell" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="bOw-7L-4Qb">
-                                                    <rect key="frame" x="16" y="12" width="20" height="19.5"/>
-                                                </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remind me" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8al-oN-Ajc">
-                                                    <rect key="frame" x="56" y="11.5" width="86" height="21"/>
+                                                    <rect key="frame" x="16" y="11.5" width="86" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -126,10 +124,8 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Q8W-Bv-lG5" firstAttribute="centerY" secondItem="6Pw-eE-Nbl" secondAttribute="centerY" id="3Wa-rR-VSh"/>
+                                                <constraint firstItem="8al-oN-Ajc" firstAttribute="leading" secondItem="6Pw-eE-Nbl" secondAttribute="leadingMargin" id="FW7-Ra-Uft"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Q8W-Bv-lG5" secondAttribute="trailing" id="Q7y-Jr-RjS"/>
-                                                <constraint firstItem="bOw-7L-4Qb" firstAttribute="leading" secondItem="6Pw-eE-Nbl" secondAttribute="leadingMargin" id="RXa-C9-MoQ"/>
-                                                <constraint firstItem="8al-oN-Ajc" firstAttribute="leading" secondItem="bOw-7L-4Qb" secondAttribute="trailing" constant="20" id="nWd-OY-Xhv"/>
-                                                <constraint firstItem="bOw-7L-4Qb" firstAttribute="centerY" secondItem="6Pw-eE-Nbl" secondAttribute="centerY" id="vSZ-Ob-T1B"/>
                                                 <constraint firstItem="8al-oN-Ajc" firstAttribute="centerY" secondItem="6Pw-eE-Nbl" secondAttribute="centerY" id="xry-df-EkS"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -142,11 +138,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="clock" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="vJe-hL-HjI">
-                                                    <rect key="frame" x="16" y="12.5" width="20" height="19"/>
-                                                </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Due" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ieG-PG-cls">
-                                                    <rect key="frame" x="56" y="11.5" width="31" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Due date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ieG-PG-cls">
+                                                    <rect key="frame" x="16" y="11.5" width="69.5" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -159,12 +152,10 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="ieG-PG-cls" firstAttribute="leading" secondItem="eoV-EL-WxT" secondAttribute="leadingMargin" id="Abn-pa-J0F"/>
                                                 <constraint firstItem="ieG-PG-cls" firstAttribute="centerY" secondItem="eoV-EL-WxT" secondAttribute="centerY" id="Aq9-MP-kVc"/>
                                                 <constraint firstItem="Vut-rJ-ep8" firstAttribute="centerY" secondItem="eoV-EL-WxT" secondAttribute="centerY" id="RUx-Sy-a9n"/>
-                                                <constraint firstItem="ieG-PG-cls" firstAttribute="leading" secondItem="vJe-hL-HjI" secondAttribute="trailing" constant="20" id="TRd-pm-Ntm"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Vut-rJ-ep8" secondAttribute="trailing" id="jv0-kz-CTX"/>
-                                                <constraint firstItem="vJe-hL-HjI" firstAttribute="leading" secondItem="eoV-EL-WxT" secondAttribute="leadingMargin" id="pZh-QL-l03"/>
-                                                <constraint firstItem="vJe-hL-HjI" firstAttribute="centerY" secondItem="eoV-EL-WxT" secondAttribute="centerY" id="tD0-77-foT"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -447,8 +438,4 @@
     <inferredMetricsTieBreakers>
         <segue reference="714-iD-XwE"/>
     </inferredMetricsTieBreakers>
-    <resources>
-        <image name="bell" catalog="system" width="128" height="124"/>
-        <image name="clock" catalog="system" width="128" height="121"/>
-    </resources>
 </document>

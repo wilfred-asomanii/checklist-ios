@@ -34,7 +34,9 @@ class IconPickerViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "iconCell", for: indexPath)
 
         cell.textLabel?.text = icons[indexPath.row]
-        cell.imageView?.image = UIImage(named: icons[indexPath.row])?.withTintColor(.systemPurple)
+        cell.imageView?.image = UIImage(named: icons[indexPath.row])
+        cell.imageView?.tintColor = .systemPurple
+
         return cell
     }
 
