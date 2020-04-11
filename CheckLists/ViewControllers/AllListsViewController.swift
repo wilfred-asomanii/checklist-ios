@@ -9,7 +9,8 @@
 import UIKit
 import UserNotifications
 
-class AllListsViewController: UITableViewController, ListDetailDelegate, UINavigationControllerDelegate, UISearchResultsUpdating {
+// UIViewControllerPreviewingDelegate allows for previewing popup content
+class AllListsViewController: UITableViewController, ListDetailDelegate, UINavigationControllerDelegate, UISearchResultsUpdating, UIViewControllerPreviewingDelegate {
 
     // MARK:- variables
     let cellIdentier = "list-cell"
@@ -37,6 +38,9 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         searchController.searchBar.placeholder = "Search checklists"
         navigationItem.searchController = searchController
         definesPresentationContext = true
+
+        // register this controller to show previews
+        registerForPreviewing(with: self, sourceView: tableView)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -164,6 +168,28 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         return 80
     }
 
+    // MARK:- preview delegates
+
+    // this is called first when user "request" preview of table cell
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        // location here is the location of the cell so it can be used to fetch indexpath
+        if let indexPath = tableView.indexPathForRow(at: location) {
+            // make the source of the preview popup the cell in question, at this indexpath
+            previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
+
+            // create and return the preview controller
+            let controller = checklistViewController(for: dataModel.checklists[indexPath.row])
+            return controller
+        }
+        return nil
+    }
+
+    // this method is called when the user "requests" to "open" the preview in full
+    // here, you navigate to that contoller, which is the controller returned form previewingContext(_:viewControllerForLocation:)
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        navigationController?.pushViewController(viewControllerToCommit, animated: true)
+    }
+
     // MARK:- list detail delegates
     func listDetailView(_ viewController: ListDetailViewController, editedChecklist list: Checklist) {
         navigationController?.popViewController(animated: true)
@@ -183,6 +209,20 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
     }
 
     // MARK:- member functions
+
+    // return a ChecklistViewController to display content of a checklist
+    func checklistViewController(for checklist: Checklist) -> ChecklistViewController? {
+        // you cannot just create an object of the controller yourself, use storyboard to do that, it'll instantiate the view as well, given the soryboard id of the controller.
+        guard let vc = storyboard?.instantiateViewController(withIdentifier: "CheckListViewController") as? ChecklistViewController else {
+            return nil
+        }
+
+        // prepare necessary properties
+        vc.checklist = checklist
+        vc.dataModel = dataModel
+        return vc
+    }
+
     func configureCheckMarkNText(for cell: UITableViewCell, with item: Checklist) {
         let initialtext =   item.title
         let attrString: NSMutableAttributedString = NSMutableAttributedString(string: initialtext)
