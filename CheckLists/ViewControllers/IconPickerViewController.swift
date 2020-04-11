@@ -42,4 +42,8 @@ class IconPickerViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         pickerDelegate?.iconPicker(self, didPick: icons[indexPath.row])
     }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
+    }
 }

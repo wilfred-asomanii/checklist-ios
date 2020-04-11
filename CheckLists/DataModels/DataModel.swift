@@ -64,22 +64,24 @@ class DataModel {
         }
     }
 
-    func toggleNotification(for item: ChecklistItem) {
+    func toggleNotification(for item: ChecklistItem, inList listID: Int) {
         // remove pending notif for this item
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) {
             [weak self] granted, _ in
-            if granted { self?.finaliseNotifcationToggle(item, center) }
+            if granted { self?.finaliseNotifcationToggle(item, center, listID) }
         }
     }
 
-    func finaliseNotifcationToggle(_ item: ChecklistItem, _ center: UNUserNotificationCenter) {
+    func finaliseNotifcationToggle(_ item: ChecklistItem, _ center: UNUserNotificationCenter, _ listID: Int) {
         unscheduleNotification(for: item, notificationCenter: center)
         if item.shouldRemind && item.dueDate > Date() {
             let content = UNMutableNotificationContent()
             content.title = "Remember!"
             content.body = item.title
             content.sound = .default
+            let userInfo = ["listID": listID, "itemID": item.itemID]
+            content.userInfo = userInfo
 
             let calendar = Calendar(identifier: .gregorian)
             let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: item.dueDate)

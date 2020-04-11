@@ -13,6 +13,7 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
 
     // MARK:- instance variables/properties
     var checklist: Checklist!
+    var item: ChecklistItem? // this will be passed if a notification of said item is tapped
     var dataModel: DataModel!
     
     // MARK:- view controller methods
@@ -25,6 +26,20 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
             return
         }
         title = checklist.title
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // briefly highlight listItem if one was passed
+        guard let item = item else {
+            return
+        }
+        if let index = checklist.items.firstIndex(of: item) {
+        let indexPath = IndexPath(row: index, section: 0)
+            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
 
     // MARK: Navigation
@@ -97,7 +112,7 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
     // MARK:- add item view controller delegates
 
     func itemViewController(_ controller: ItemViewController, didFinishEditing item: ChecklistItem) {
-        dataModel.toggleNotification(for: item)
+        dataModel.toggleNotification(for: item, inList: checklist.listID)
         if let index = checklist.items.firstIndex(of: item) {
             if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) {
                 configureCheckMarkNText(for: cell, with: item)
@@ -108,7 +123,7 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
 
     func itemViewController(_ controller: ItemViewController, didFinishAdding item: ChecklistItem) {
 
-        dataModel.toggleNotification(for: item)
+        dataModel.toggleNotification(for: item, inList: checklist.listID)
         let indexPath = IndexPath(row: checklist.items.count, section: 0)
         checklist.items.append(item)
         tableView.insertRows(at: [indexPath], with: .automatic)
@@ -117,11 +132,13 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
     // MARK:- member functions
     func configureCheckMarkNText(for cell: UITableViewCell, with item: ChecklistItem) {
         cell.textLabel?.text = item.title
+        cell.textLabel?.numberOfLines = 2
 
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         cell.detailTextLabel?.text = "Due \(formatter.string(from: item.dueDate))"
+        cell.detailTextLabel?.textColor = .systemPurple
 
         cell.accessoryType = item.isChecked ? .checkmark : .none
     }
@@ -135,7 +152,7 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
             let deletedItem = checklist.items.remove(at: indexPath.row)
             if deletedItem.shouldRemind {
             deletedItem.shouldRemind = false
-                dataModel.toggleNotification(for: deletedItem)
+                dataModel.toggleNotification(for: deletedItem, inList: checklist.listID)
             }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }

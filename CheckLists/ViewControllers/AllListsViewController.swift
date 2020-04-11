@@ -17,6 +17,7 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
 
     var dataModel: DataModel!
     var searchMatches = [Checklist]()
+    var openedIndex: Int? // the index of a list that has been clicked
     var isSearching: Bool {
         get {
             return searchController.searchBar.text != nil && searchController.searchBar.text!.count > 0
@@ -38,14 +39,13 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         definesPresentationContext = true
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        tableView.reloadSections([0], with: .automatic)
+
+        if let openedIndex = openedIndex {
+            // reload only the cell that was clicked
+            tableView.reloadRows(at: [IndexPath(row: openedIndex, section: 0)], with: .automatic)
+        }
         navigationController?.delegate = self
 
         let prevIndex = dataModel.prevSelectedIndex
@@ -59,6 +59,14 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             if let checklist = sender as? Checklist {
                 controller.checklist = checklist
                 controller.dataModel = dataModel
+                openedIndex = dataModel.checklists.firstIndex(of: checklist)
+            } else if let data = sender as? [String: Any],
+                let checklist = data["checklist"] as? Checklist,
+                let item = data["listItem"] as? ChecklistItem {
+                controller.checklist = checklist
+                controller.item = item
+                controller.dataModel = dataModel
+                openedIndex = dataModel.checklists.firstIndex(of: checklist)
             }
         } else if segue.identifier == "listDetailSegue" {
             let navController = segue.destination as! UINavigationController
@@ -179,10 +187,11 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         let initialtext =   item.title
         let attrString: NSMutableAttributedString = NSMutableAttributedString(string: initialtext)
 
-        let range: NSRange = (initialtext as NSString).range(of: searchController.searchBar.text ?? "", options: .caseInsensitive)
+        let range: NSRange = (initialtext as NSString).localizedStandardRange(of: searchController.searchBar.text ?? "")
 
 
-        attrString.addAttribute(.backgroundColor, value: UIColor.systemPurple, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: range)
+        attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 25), range: range)
 
 
         cell.textLabel?.attributedText = attrString
@@ -194,12 +203,6 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
         let count = item.items.filter() { it in
             return !it.isChecked
         }.count
-        // reduce is used to return a combined value from an list eg: sum, string concat
-//        let size = item.items.reduce(0) { cnt, item in
-//            cnt + (item.isChecked ? 0 : 1)
-//        }
-//
-//        print("count:", count, "size:", size)
 
         switch count {
         case let x where x == 0 && item.items.count > 0:
@@ -223,11 +226,31 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             for item in deletedList.items {
                 if item.shouldRemind {
                     item.shouldRemind = false
-                    dataModel.toggleNotification(for: item)
+                    dataModel.toggleNotification(for: item, inList: deletedList.listID)
                 }
             }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         handler(true)
+    }
+
+    func notificationTapped(for itemID: Int, inList listID: Int) {
+        let checklist = dataModel.checklists.first { list in
+            return list.listID == listID
+        }
+
+        guard let list = checklist else { return }
+        let listItem = list.items.first { item in
+            return item.itemID == itemID
+        }
+        guard let item = listItem else { return }
+        let topView = navigationController?.topViewController as? AllListsViewController
+        if topView == nil {
+            // this controller is not the topmost view so pop
+            navigationController?.popToRootViewController(animated: true)
+        }
+
+        dismiss(animated: true, completion: nil) // in case there's a modal over this controller
+        performSegue(withIdentifier: "showChecklistSegue", sender: ["checklist": list, "listItem": item])
     }
 }

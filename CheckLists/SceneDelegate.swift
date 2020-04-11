@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
     let dataModel = DataModel()
@@ -20,10 +20,42 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
 
+        let center = UNUserNotificationCenter.current()
+               center.delegate = self
+
+//        let content = UNMutableNotificationContent()
+//        content.title = "test"
+//        content.body = "asdsadasdsadsdsadsd"
+//        content.sound = .default
+//        content.userInfo = ["itemID": 5, "listID": 4]
+//
+//        let request = UNNotificationRequest(identifier: "asd", content: content, trigger: nil)
+//        center.add(request, withCompletionHandler: nil)
+
+
         _ = dataModel.loadData()
         let controller = window?.rootViewController as? UINavigationController
         let allListsView = controller?.viewControllers.first as? AllListsViewController
         allListsView?.dataModel = dataModel
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler(.alert)
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+
+        let userInfo = response.notification.request.content.userInfo
+        guard let itemID = userInfo["itemID"], let listID = userInfo["listID"] else {
+            completionHandler()
+            return
+        }
+
+        let controller = window?.rootViewController as? UINavigationController
+        let allListsView = controller?.viewControllers.first as? AllListsViewController
+        allListsView?.notificationTapped(for: itemID as! Int, inList: listID as! Int)
+
+        completionHandler()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
