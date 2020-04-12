@@ -26,6 +26,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var remindSwith: UISwitch!
     @IBOutlet weak var dueDatePicker: UIDatePicker!
     @IBOutlet var datePickerCell: UITableViewCell!
+    @IBOutlet weak var repeatSwitch: UISwitch!
 
     // MARK:- variables
     weak var itemViewDelegate: ItemViewControllerDelegate?
@@ -41,6 +42,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
             title = "Edit Item"
             nameTextField?.text = item.title
             remindSwith.isOn = item.shouldRemind
+            repeatSwitch.isOn = item.shouldRepeat
             dueDate = item.dueDate
             doneBarButton?.isEnabled = true
         }
@@ -54,9 +56,16 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     }
 
     // MARK:- Table view delegates
+
+    @IBAction func remindMeChanged(_ sender: UISwitch) {
+        if !sender.isOn {
+            repeatSwitch.setOn(false, animated: true)
+        }
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 1 && isDatePickerVisible {
-            return 3 // the new # of cells after dynamically adding cells
+            return 4 // the new # of cells after dynamically adding cells
         }
         // return super for section that wasn't changed
         return super.tableView(tableView, numberOfRowsInSection: section)
@@ -78,7 +87,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     // for a static table like this, you'll overide this method so you can add some dynamic cells
     // remember to call super for other cells in storyboard to work
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 1 && indexPath.row == 2 {
+        if indexPath.section == 1 && indexPath.row == 2 && isDatePickerVisible {
             return datePickerCell
         }
         // return super for static cells
@@ -87,16 +96,16 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
 
     // since we're adding a dynamic cell that contains a date picker and is huge, we have to return that height here
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 1 && indexPath.row == 2 {
+        if indexPath.section == 1 && indexPath.row == 2 && isDatePickerVisible {
             return 217 // height of the date picker cell
         }
-        return super.tableView(tableView, heightForRowAt: indexPath)
+        return 50
     }
 
     // aslo the table view cannot find the indent of a cell that wasn't originally in the storyboard
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
         var cellPath = indexPath
-        if cellPath.section == 1 && cellPath.row == 2 {
+        if cellPath.section == 1 && cellPath.row == 2 && isDatePickerVisible {
             // for this "unknowncell" use the same indentation of an already existing cell
             cellPath = IndexPath(row: 0, section: cellPath.section)
         }
@@ -171,7 +180,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     @IBAction func done() {
         guard let item = itemToEdit else {
             // itemToEdit is nil
-            let addedItem = ChecklistItem(title: nameTextField?.text ?? "", shouldRemind: remindSwith.isOn, dueDate: dueDate)
+            let addedItem = ChecklistItem(title: nameTextField?.text ?? "", shouldRemind: remindSwith.isOn, shouldRepeat: repeatSwitch.isOn,  dueDate: dueDate)
             itemViewDelegate?.itemViewController(self, didFinishAdding: addedItem)
             dismiss(animated: true, completion: nil)
             return
@@ -180,6 +189,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
         item.title = nameTextField?.text ?? ""
         item.dueDate = dueDate
         item.shouldRemind = remindSwith.isOn
+        item.shouldRepeat = repeatSwitch.isOn
         itemViewDelegate?.itemViewController(self, didFinishEditing: item)
         dismiss(animated: true, completion: nil)
     }

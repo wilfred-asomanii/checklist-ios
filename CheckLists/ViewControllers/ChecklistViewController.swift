@@ -36,7 +36,7 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
             return
         }
         if let index = checklist.items.firstIndex(of: item) {
-        let indexPath = IndexPath(row: index, section: 0)
+            let indexPath = IndexPath(row: index, section: 0)
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
             tableView.deselectRow(at: indexPath, animated: true)
         }
@@ -68,9 +68,14 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CheckListItem", for: indexPath)
+        var cell: UITableViewCell!
+
         let item = checklist.items[indexPath.row]
-        
+        if item.shouldRemind {
+            cell = tableView.dequeueReusableCell(withIdentifier: "remindListItem", for: indexPath)
+        } else {
+            cell = tableView.dequeueReusableCell(withIdentifier: "listItem", for: indexPath)
+        }
 
         configureCheckMarkNText(for: cell, with: item)
         
@@ -81,6 +86,12 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
             let item = checklist.items[indexPath.row]
+            if !item.isChecked && item.shouldRemind {
+                // task is completed but there's still a notification for it so remove
+                item.shouldRemind = false
+                item.shouldRepeat = false
+                dataModel.toggleNotification(for: item, inList: checklist.listID)
+            }
             item.toggleChecked()
             configureCheckMarkNText(for: cell, with: item)
         }
@@ -106,7 +117,8 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+
+        return checklist.items[indexPath.row].shouldRemind ? 80 : 70
     }
 
     // MARK:- add item view controller delegates
@@ -134,11 +146,13 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
         cell.textLabel?.text = item.title
         cell.textLabel?.numberOfLines = 2
 
+        if item.shouldRemind {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
-        cell.detailTextLabel?.text = "Due \(formatter.string(from: item.dueDate))"
-        cell.detailTextLabel?.textColor = .systemPurple
+            cell.detailTextLabel?.text = "Due \(formatter.string(from: item.dueDate))"
+            cell.detailTextLabel?.textColor = item.dueDate < Date() ? .systemRed : .systemPurple
+        }
 
         cell.accessoryType = item.isChecked ? .checkmark : .none
     }
@@ -151,7 +165,8 @@ class ChecklistViewController: UITableViewController, ItemViewControllerDelegate
         } else if title == "Delete" {
             let deletedItem = checklist.items.remove(at: indexPath.row)
             if deletedItem.shouldRemind {
-            deletedItem.shouldRemind = false
+                deletedItem.shouldRemind = false
+                deletedItem.shouldRepeat = false
                 dataModel.toggleNotification(for: deletedItem, inList: checklist.listID)
             }
             tableView.deleteRows(at: [indexPath], with: .automatic)

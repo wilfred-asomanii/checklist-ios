@@ -224,18 +224,15 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
     }
 
     func configureCheckMarkNText(for cell: UITableViewCell, with item: Checklist) {
-        let initialtext =   item.title
-        let attrString: NSMutableAttributedString = NSMutableAttributedString(string: initialtext)
+        let title = item.title
+        let attrString: NSMutableAttributedString = NSMutableAttributedString(string: title)
 
-        var ranges: [Range<String.Index>] = []
-        while ranges.last.map({ $0.upperBound < initialtext.endIndex}) ?? true,
-            let range = initialtext.range(of: searchController.searchBar.text ?? "", options: .caseInsensitive, range: (ranges.last?.upperBound ?? initialtext.startIndex)..<initialtext.endIndex, locale: .current) {
-            ranges.append(range)
-        }
+        let ranges = title.ranges(of: searchController.searchBar.text ?? "")
 
-        for r in ranges {
-            attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: NSRange(r, in: initialtext))
-            attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: NSRange(r, in: initialtext))
+        for range in ranges {
+            let nsRange = NSRange(range, in: title)
+            attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: nsRange)
+            attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: nsRange)
         }
 
         cell.textLabel?.attributedText = attrString
@@ -266,11 +263,10 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             performSegue(withIdentifier: "listDetailSegue", sender: indexPath)
         } else if title == "Delete" {
             let deletedList = dataModel.checklists.remove(at: indexPath.row)
-            for item in deletedList.items {
-                if item.shouldRemind {
-                    item.shouldRemind = false
-                    dataModel.toggleNotification(for: item, inList: deletedList.listID)
-                }
+            for item in deletedList.items where item.shouldRemind {
+                item.shouldRemind = false
+                item.shouldRepeat = false
+                dataModel.toggleNotification(for: item, inList: deletedList.listID)
             }
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }

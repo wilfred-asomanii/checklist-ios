@@ -32,14 +32,15 @@ class ChecklistItem: NSObject, Codable {
 
     var itemID: Int
     var title: String
-    var isChecked, shouldRemind: Bool
+    var isChecked, shouldRemind, shouldRepeat: Bool
     var dueDate: Date
 
 
-    internal init(title: String, isChecked: Bool = false, shouldRemind: Bool = false, itemID: Int = DataModel.nextChecklistItemID(), dueDate: Date = Date()) {
+    internal init(title: String, isChecked: Bool = false, shouldRemind: Bool = false, shouldRepeat: Bool = false, itemID: Int = DataModel.nextChecklistItemID(), dueDate: Date = Date()) {
         self.title = title
         self.isChecked = isChecked
         self.shouldRemind = shouldRemind
+        self.shouldRepeat = shouldRepeat
         self.dueDate = dueDate
         self.itemID = itemID
 

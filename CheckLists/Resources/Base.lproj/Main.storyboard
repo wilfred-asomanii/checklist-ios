@@ -17,7 +17,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="CheckListItem" editingAccessoryType="disclosureIndicator" textLabel="0aT-g1-l8G" detailTextLabel="RC9-Kb-Wxl" style="IBUITableViewCellStyleSubtitle" id="Lsx-0a-A9f">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="remindListItem" editingAccessoryType="disclosureIndicator" textLabel="0aT-g1-l8G" detailTextLabel="RC9-Kb-Wxl" style="IBUITableViewCellStyleSubtitle" id="Lsx-0a-A9f">
                                 <rect key="frame" x="0.0" y="55.5" width="320" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Lsx-0a-A9f" id="Yo0-At-QJR">
@@ -44,6 +44,23 @@
                                     <segue destination="dE6-9s-JlI" kind="presentation" identifier="EditItemSegue" trigger="accessoryAction" id="714-iD-XwE"/>
                                 </connections>
                             </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="listItem" editingAccessoryType="disclosureIndicator" textLabel="3Aw-yz-5yT" style="IBUITableViewCellStyleDefault" id="yL5-9a-da4">
+                                <rect key="frame" x="0.0" y="111" width="320" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yL5-9a-da4" id="sP2-Id-FIU">
+                                    <rect key="frame" x="0.0" y="0.0" width="280" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3Aw-yz-5yT">
+                                            <rect key="frame" x="16" y="0.0" width="256" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="QFZ-Be-fzW" id="08q-TG-6zk"/>
@@ -61,7 +78,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XKN-GR-Yom" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1886.9565217391305" y="32.8125"/>
+            <point key="canvasLocation" x="1886.25" y="32.74647887323944"/>
         </scene>
         <!--Item view-->
         <scene sceneID="lgs-b3-aSb">
@@ -114,6 +131,9 @@
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Q8W-Bv-lG5">
                                                     <rect key="frame" x="255" y="6.5" width="51" height="31"/>
                                                     <color key="onTintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <connections>
+                                                        <action selector="remindMeChanged:" destination="Z67-dH-05K" eventType="valueChanged" id="zUE-iV-NHV"/>
+                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Remind me" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8al-oN-Ajc">
                                                     <rect key="frame" x="16" y="11.5" width="86" height="21"/>
@@ -126,6 +146,7 @@
                                                 <constraint firstItem="Q8W-Bv-lG5" firstAttribute="centerY" secondItem="6Pw-eE-Nbl" secondAttribute="centerY" id="3Wa-rR-VSh"/>
                                                 <constraint firstItem="8al-oN-Ajc" firstAttribute="leading" secondItem="6Pw-eE-Nbl" secondAttribute="leadingMargin" id="FW7-Ra-Uft"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Q8W-Bv-lG5" secondAttribute="trailing" id="Q7y-Jr-RjS"/>
+                                                <constraint firstItem="Q8W-Bv-lG5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8al-oN-Ajc" secondAttribute="trailing" constant="150" id="nIa-p3-dNS"/>
                                                 <constraint firstItem="8al-oN-Ajc" firstAttribute="centerY" secondItem="6Pw-eE-Nbl" secondAttribute="centerY" id="xry-df-EkS"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -156,6 +177,35 @@
                                                 <constraint firstItem="ieG-PG-cls" firstAttribute="centerY" secondItem="eoV-EL-WxT" secondAttribute="centerY" id="Aq9-MP-kVc"/>
                                                 <constraint firstItem="Vut-rJ-ep8" firstAttribute="centerY" secondItem="eoV-EL-WxT" secondAttribute="centerY" id="RUx-Sy-a9n"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="Vut-rJ-ep8" secondAttribute="trailing" id="jv0-kz-CTX"/>
+                                                <constraint firstItem="Vut-rJ-ep8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ieG-PG-cls" secondAttribute="trailing" constant="20.5" id="xEI-0H-VbC"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="3L9-KZ-wBc">
+                                        <rect key="frame" x="0.0" y="184.5" width="320" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="3L9-KZ-wBc" id="UeC-FQ-0G5">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PDZ-UW-abp">
+                                                    <rect key="frame" x="255" y="6.5" width="51" height="31"/>
+                                                    <color key="onTintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Repeat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2a3-BP-cu7">
+                                                    <rect key="frame" x="16" y="11.5" width="54" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="PDZ-UW-abp" firstAttribute="centerY" secondItem="UeC-FQ-0G5" secondAttribute="centerY" id="87B-qa-OzK"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="PDZ-UW-abp" secondAttribute="trailing" id="MaL-f2-GVA"/>
+                                                <constraint firstItem="PDZ-UW-abp" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2a3-BP-cu7" secondAttribute="trailing" constant="185" id="TkK-fA-UFa"/>
+                                                <constraint firstItem="2a3-BP-cu7" firstAttribute="centerY" secondItem="UeC-FQ-0G5" secondAttribute="centerY" id="WUp-6t-9nu"/>
+                                                <constraint firstItem="2a3-BP-cu7" firstAttribute="leading" secondItem="UeC-FQ-0G5" secondAttribute="leadingMargin" id="la1-jI-KTg"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -189,6 +239,7 @@
                         <outlet property="dueDatePicker" destination="FP9-3g-h1l" id="6ph-tk-GRC"/>
                         <outlet property="nameTextField" destination="QTd-Ov-o41" id="0th-xN-YCm"/>
                         <outlet property="remindSwith" destination="Q8W-Bv-lG5" id="M0E-Pv-kJs"/>
+                        <outlet property="repeatSwitch" destination="PDZ-UW-abp" id="GwG-oH-xjY"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lFl-E1-6cA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

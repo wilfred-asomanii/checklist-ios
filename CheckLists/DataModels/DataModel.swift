@@ -55,7 +55,7 @@ class DataModel {
         }
     }
 
-    func handleFirstTime() {
+    private func handleFirstTime() {
         if UserDefaults.standard.bool(forKey: "FirstTime") {
             checklists.append(Checklist(title: "To Do", iconName: "Appointments"))
             prevSelectedIndex = 0
@@ -73,9 +73,9 @@ class DataModel {
         }
     }
 
-    func finaliseNotifcationToggle(_ item: ChecklistItem, _ center: UNUserNotificationCenter, _ listID: Int) {
+    private func finaliseNotifcationToggle(_ item: ChecklistItem, _ center: UNUserNotificationCenter, _ listID: Int) {
         unscheduleNotification(for: item, notificationCenter: center)
-        if item.shouldRemind && item.dueDate > Date() {
+        if item.shouldRemind && !item.isChecked && item.dueDate > Date() {
             let content = UNMutableNotificationContent()
             content.title = "Remember!"
             content.body = item.title
@@ -85,13 +85,13 @@ class DataModel {
 
             let calendar = Calendar(identifier: .gregorian)
             let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: item.dueDate)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: item.shouldRepeat)
             let request = UNNotificationRequest(identifier: "\(item.itemID)", content: content, trigger: trigger)
             center.add(request, withCompletionHandler: nil)
         }
     }
 
-    func unscheduleNotification(for item: ChecklistItem, notificationCenter: UNUserNotificationCenter?) {
+    private func unscheduleNotification(for item: ChecklistItem, notificationCenter: UNUserNotificationCenter?) {
         var center = notificationCenter
         if center == nil {
             center = UNUserNotificationCenter.current()
@@ -99,13 +99,13 @@ class DataModel {
         center?.removePendingNotificationRequests(withIdentifiers: ["\(item.itemID)"])
     }
 
-    func documentsDirectory() -> URL {
+    private func documentsDirectory() -> URL {
         let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 
         return path[0]
     }
 
-    func dataFilePath() -> URL {
+    private func dataFilePath() -> URL {
         return documentsDirectory().appendingPathComponent("CheckList.plist")
     }
 
