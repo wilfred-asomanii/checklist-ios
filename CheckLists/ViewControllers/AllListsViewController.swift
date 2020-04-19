@@ -178,6 +178,7 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
 
             // create and return the preview controller
+            openedIndex = indexPath.row
             let controller = checklistViewController(for: dataModel.checklists[indexPath.row])
             return controller
         }
@@ -289,7 +290,9 @@ class AllListsViewController: UITableViewController, ListDetailDelegate, UINavig
             navigationController?.popToRootViewController(animated: true)
         }
 
+        if presentedViewController != nil {
         dismiss(animated: true, completion: nil) // in case there's a modal over this controller
+        }
         performSegue(withIdentifier: "showChecklistSegue", sender: ["checklist": list, "listItem": item])
     }
 }

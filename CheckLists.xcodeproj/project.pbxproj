@@ -13,6 +13,7 @@
 		437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5139243FF3D1001EC7BF /* DataModel.swift */; };
 		43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B64F50243D4BEB00D313EA /* ItemViewController.swift */; };
 		43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */; };
+		43F4DCEC244CA83800865B81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43F4DCEB244CA83800865B81 /* GoogleService-Info.plist */; };
 		43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */; };
 		43FD7EC0243CC52D006FAAB1 /* ChecklistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBF243CC52D006FAAB1 /* ChecklistViewController.swift */; };
 		43FD7EC3243CC52D006FAAB1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FD7EC1243CC52D006FAAB1 /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 		437B5139243FF3D1001EC7BF /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		43B64F50243D4BEB00D313EA /* ItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
 		43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerViewController.swift; sourceTree = "<group>"; };
+		43F4DCEB244CA83800865B81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		43FD7EB8243CC52D006FAAB1 /* CheckLists.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheckLists.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		43FD7EBF243CC52D006FAAB1 /* ChecklistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistViewController.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				4384B23924402125000A5CED /* ViewControllers */,
 				43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */,
 				43FD7EC9243CC52F006FAAB1 /* Info.plist */,
+				43F4DCEB244CA83800865B81 /* GoogleService-Info.plist */,
 			);
 			path = CheckLists;
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 			files = (
 				43FD7EC5243CC52F006FAAB1 /* Assets.xcassets in Resources */,
 				43FD7EC3243CC52D006FAAB1 /* Main.storyboard in Resources */,
+				43F4DCEC244CA83800865B81 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
