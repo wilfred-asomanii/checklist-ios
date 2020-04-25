@@ -11,8 +11,8 @@ import FirebaseFirestore
 
 class ChecklistViewController: UITableViewController {
     
-    
     // MARK:- instance variables/properties
+    var previewDelegate: CheckListPreviewDelegate?
     var checklist: Checklist!
     var items = [ChecklistItem]()
     var item: ChecklistItem? // this will be passed if a notification of said item is tapped
@@ -22,7 +22,6 @@ class ChecklistViewController: UITableViewController {
     // MARK:- view controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         navigationItem.rightBarButtonItems?.append(editButtonItem)
         guard let checklist = checklist else {
             navigationController?.popViewController(animated: true)
@@ -53,7 +52,59 @@ class ChecklistViewController: UITableViewController {
         }
     }
     
-    // MARK:- table view methods
+    // MARK:- member functions
+    
+    func loadData() {
+        showIndicator(for: .loading)
+        dataController.getListItems(in: checklist.listID) { [weak self] state in
+            self?.showIndicator(for: state)
+            if case DataState.success(let items as [ChecklistItem]) = state {
+                self?.items = items
+                self?.tableView.reloadSections([0], with: .automatic)
+                
+                // briefly highlight listItem if one was passed
+                guard let self = self,
+                    let item = self.item,
+                    let index = items.firstIndex(where: { $0.itemID == item.itemID })
+                    else { return }
+                let indexPath = IndexPath(row: index, section: 0)
+                self.tableView.highlightRow(at: indexPath)
+                self.item = nil
+            }
+        }
+    }
+    
+    fileprivate func showIndicator(for state: DataState) {
+        hud?.removeFromSuperview()
+        guard let navigationController = navigationController else { return }
+        hud = HudView.hud(inView: navigationController.view,
+                          animated: true, state: state)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.hud?.hide()
+        }
+    }
+    
+    func removeItem(at path: IndexPath) {
+        let deletedItem = self.items.remove(at: path.row)
+        dataController.removeListItem(deletedItem, in: checklist)
+        tableView.deleteRows(at: [path], with: .left)
+    }
+    
+    func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
+        let title = action.title ?? ""
+        
+        if title == "Edit" {
+            performSegue(withIdentifier: "EditItemSegue", sender: tableView.cellForRow(at: indexPath))
+        } else if title == "Delete" {
+            removeItem(at: indexPath)
+        }
+        handler(true)
+    }
+}
+
+// MARK:- tableview data source
+extension ChecklistViewController {
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
@@ -115,54 +166,6 @@ class ChecklistViewController: UITableViewController {
         return items[indexPath.row].shouldRemind ? 80 : 70
     }
     
-    // MARK:- member functions
-    
-    func loadData() {
-        showIndicator(for: .loading)
-        dataController.getListItems(in: checklist.listID) { [weak self] state in
-            self?.showIndicator(for: state)
-            if case DataState.success(let items as [ChecklistItem]) = state {
-                self?.items = items
-                self?.tableView.reloadSections([0], with: .automatic)
-                
-                // briefly highlight listItem if one was passed
-                guard let self = self,
-                    let item = self.item,
-                    let index = items.firstIndex(of: item) else { return }
-                
-                let indexPath = IndexPath(row: index, section: 0)
-                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                self.tableView.deselectRow(at: indexPath, animated: true)
-                self.item = nil
-            }
-        }
-    }
-    
-    fileprivate func showIndicator(for state: DataState) {
-        hud?.removeFromSuperview()
-        hud = HudView.hud(inView: navigationController!.view,
-                          animated: true, state: state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.hud?.hide()
-        }
-    }
-    
-    func removeItem(at path: IndexPath) {
-        let deletedItem = self.items.remove(at: path.row)
-        dataController.removeListItem(deletedItem, in: checklist)
-        tableView.deleteRows(at: [path], with: .left)
-    }
-    
-    func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
-        let title = action.title ?? ""
-        
-        if title == "Edit" {
-            performSegue(withIdentifier: "EditItemSegue", sender: tableView.cellForRow(at: indexPath))
-        } else if title == "Delete" {
-            removeItem(at: indexPath)
-        }
-        handler(true)
-    }
 }
 
 // MARK:- ItemViewControllerDelegate
@@ -176,5 +179,38 @@ extension ChecklistViewController: ItemViewControllerDelegate {
         let path = IndexPath(row: items.count, section: 0)
         items.append(item)
         tableView.insertRows(at: [path], with: .bottom)
+    }
+}
+
+// MARK:- preview stuff
+
+protocol CheckListPreviewDelegate {
+    func checkListPreview(didDeleteFrom controller: ChecklistViewController)
+    func checkListPreview(didEditFrom controller: ChecklistViewController)
+}
+
+extension ChecklistViewController {
+    override var previewActionItems: [UIPreviewActionItem] {
+        let delAction = UIPreviewAction(title: "Delete", style: .destructive) {
+            print($0, $1)
+            self.previewDelegate?.checkListPreview(didDeleteFrom: self)
+        }
+        let editAction = UIPreviewAction(title: "Edit", style: .default) {
+            print($0, $1)
+            self.previewDelegate?.checkListPreview(didEditFrom: self)
+        }
+        return [editAction, delAction]
+    }
+}
+
+// MARK:- factories
+extension ChecklistViewController {
+    class func checklistViewController(for checklist: Checklist, storyboard: UIStoryboard, dataController: DataController) -> ChecklistViewController? {
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "CheckListViewController") as? ChecklistViewController else {
+            return nil
+        }
+        vc.checklist = checklist
+        vc.dataController = dataController
+        return vc
     }
 }

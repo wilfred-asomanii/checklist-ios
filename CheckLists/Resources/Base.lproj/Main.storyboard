@@ -339,6 +339,12 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="QFZ-Be-fzW" kind="show" identifier="showChecklistSegue" id="NzJ-Mf-qq8">
+                                        <segue key="commit" inheritsFrom="parent" id="bu6-hK-H83"/>
+                                        <segue key="preview" inheritsFrom="commit" id="hhk-YR-21e"/>
+                                    </segue>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -353,9 +359,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="QFZ-Be-fzW" kind="show" identifier="showChecklistSegue" id="mbZ-MR-a7N"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KeK-3A-urY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -784,6 +787,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="9Nk-pi-HfT"/>
+        <segue reference="NzJ-Mf-qq8"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
     <resources>

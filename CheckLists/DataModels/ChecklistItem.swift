@@ -9,15 +9,15 @@
 import Foundation
 
 class ChecklistItem: NSObject, Codable {
-
+    
     var userID: String = ""
     var itemID: String
     var listID: String
     var title: String
     var isChecked, shouldRemind, shouldRepeat: Bool
     var dueDate: Date
-
-
+    
+    
     internal init(title: String, listID: String, isChecked: Bool = false,
                   shouldRemind: Bool = false, shouldRepeat: Bool = false,
                   itemID: String = DataController.nextChecklistItemID(),
@@ -29,7 +29,7 @@ class ChecklistItem: NSObject, Codable {
         self.dueDate = dueDate
         self.itemID = itemID
         self.listID = listID
-
+        
         super.init()
     }
     

@@ -130,16 +130,16 @@ class DataController {
         }
         
         query.getDocuments {
-                data, error in
-                if let error = error { completion?(.error(error)); return }
-                data?.documents.forEach { [weak self] doc in
-                    guard let item = try? doc.data(as: ChecklistItem.self) else { return }
-                    
-                    self?.store.collection("checklist-items").document(item.itemID).delete()
-                    item.shouldRemind = false
-                    item.shouldRepeat = false
-                    self?.toggleNotification(for: item)
-                }
+            data, error in
+            if let error = error { completion?(.error(error)); return }
+            data?.documents.forEach { [weak self] doc in
+                guard let item = try? doc.data(as: ChecklistItem.self) else { return }
+                
+                self?.store.collection("checklist-items").document(item.itemID).delete()
+                item.shouldRemind = false
+                item.shouldRepeat = false
+                self?.toggleNotification(for: item)
+            }
         }
     }
     
@@ -154,20 +154,20 @@ class DataController {
         }
         
         query.getDocuments { data, error in
-                if let error = error { completion?(.error(error)); return }
-                let items: [ChecklistItem?] = data!.documents.map { doc in
-                    let res = Result {
-                        try doc.data(as: ChecklistItem.self)
-                    }
-                    switch res {
-                    case .success(let item):
-                        return item
-                    default:
-                        return nil
-                    }
+            if let error = error { completion?(.error(error)); return }
+            let items: [ChecklistItem?] = data!.documents.map { doc in
+                let res = Result {
+                    try doc.data(as: ChecklistItem.self)
                 }
-                let res = DataState.success(items.filter { i in i != nil } as! [ChecklistItem])
-                completion?(res)
+                switch res {
+                case .success(let item):
+                    return item
+                default:
+                    return nil
+                }
+            }
+            let res = DataState.success(items.filter { i in i != nil } as! [ChecklistItem])
+            completion?(res)
         }
     }
     
@@ -210,6 +210,33 @@ class DataController {
                 default:
                     completion?(.error(nil))
                 }
+        }
+    }
+    
+    func getListAndItem(_ itemId: String, in listId: String, then completion: DataCompletion? = nil) {
+        var checklist: Checklist?
+        func getItem() {
+            store.collection("checklist-items").document(itemId).getDocument { doc, error in
+                if let error = error { completion?(.error(error)); return }
+                guard let doc = doc else {
+                    completion?(.error(nil));
+                    return
+                }
+                let res = Result {
+                    try doc.data(as: ChecklistItem.self)
+                }
+                switch res {
+                case .success(let item):
+                    completion?(.success(["item": item, "list": checklist]))
+                default:
+                    completion?(.error(nil))
+                }
+            }
+        }
+        getList(listId) { state in
+            guard case DataState.success(let list) = state else { completion?(state); return }
+            checklist = list as? Checklist
+            getItem()
         }
     }
     
