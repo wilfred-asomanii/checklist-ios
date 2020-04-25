@@ -18,24 +18,21 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     let searchController = UISearchController(searchResultsController: nil)
     
     var dataModel: DataModel!
-    var state = DataState.success([Checklist]())
     var checklists = [Checklist]()
     var searchMatches = [Checklist]()
     var isSearching: Bool {
         searchController.searchBar.text != nil && searchController.searchBar.text!.count > 0
     }
-    var auth: AuthController!
-    var listener: ListenerRegistration?
+    var openedIndex: Int?
+    var hud: HudView?
     
     // MARK:- View controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tabBarController?.navigationController?.navigationBar.isHidden = true
-        
         navigationItem.hidesBackButton = true
         navigationItem.leftBarButtonItem = editButtonItem
-        
+                
         // search controller stuff
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -45,17 +42,15 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
         
         // register this controller to show previews
         registerForPreviewing(with: self, sourceView: tableView)
+        
+        loadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
-        listenForData()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        listener?.remove()
+        guard let i = openedIndex else { return }
+        tableView.reloadRows(at: [IndexPath(row: i, section: 0)], with: .automatic)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -64,16 +59,19 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
             if let checklist = sender as? Checklist {
                 controller.checklist = checklist
                 controller.dataModel = dataModel
+                openedIndex = checklists.firstIndex(of: checklist)
             } else if let data = sender as? [String: Any],
                 let checklist = data["checklist"] as? Checklist,
                 let item = data["listItem"] as? ChecklistItem {
                 controller.checklist = checklist
                 controller.item = item
                 controller.dataModel = dataModel
+                openedIndex = checklists.firstIndex(of: checklist)
             }
         } else if segue.identifier == "listDetailSegue" {
             let navController = segue.destination as! UINavigationController
             if let controller = navController.topViewController as? ListDetailViewController {
+                controller.delegate = self
                 controller.dataModel = dataModel
                 if let path = sender as? IndexPath {
                     controller.checklist = checklists[path.row]
@@ -91,10 +89,6 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if checklists.count == 0 {
-            return 1
-        }
-        
         guard isSearching else {
             return checklists.count
         }
@@ -108,15 +102,6 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        if case DataState.error(let error) = state,
-            (error != nil && checklists.count == 0) {
-            return tableView.dequeueReusableCell(withIdentifier: "errorCell")!
-        }
-        
-        if checklists.count == 0 {
-            return tableView.dequeueReusableCell(withIdentifier: "emptyCell")!
-        }
         
         let with = isSearching ? searchMatches[indexPath.row] : checklists[indexPath.row]
         
@@ -147,6 +132,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard case UITableViewCell.EditingStyle.delete = editingStyle else { return }
         removeList(at: indexPath)
     }
     
@@ -176,6 +162,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
             previewingContext.sourceRect = tableView.rectForRow(at: indexPath)
             
             let controller = checklistViewController(for: checklists[indexPath.row])
+            openedIndex = indexPath.row
             return controller
         }
         return nil
@@ -187,13 +174,23 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     
     // MARK:- member functions
     
-    func listenForData() {
-        listener = dataModel.listenLists { [weak self] state in
-            if case DataState.success(let lists as [Checklist]) = state {
-                self?.checklists = lists
-                self?.tableView.reloadSections([0], with: .automatic)
-            }
-            self?.state = state
+    func loadData() {
+        showIndicator(for: .loading)
+        dataModel.getLists { [weak self] state in
+            self?.showIndicator(for: state)
+            guard case DataState.success(let lists as [Checklist]) = state  else { return }
+            self?.checklists = lists
+            guard lists.count > 0 else { return }
+            self?.tableView.reloadSections([0], with: .automatic)
+        }
+    }
+    
+    fileprivate func showIndicator(for state: DataState) {
+        hud?.removeFromSuperview()
+        hud = HudView.hud(inView: navigationController!.view,
+                              animated: true, state: state)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.hud?.hide()
         }
     }
     
@@ -207,7 +204,14 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     }
     
     func removeList(at path: IndexPath) {
-        dataModel.removeList(checklists[path.row])
+        let list = checklists.remove(at: path.row)
+        showIndicator(for: .loading)
+        dataModel.removeList(list) { [weak self] state in
+            self?.showIndicator(for: state)
+            guard let self = self,
+                case DataState.success(_) = state else { return }
+            self.tableView.deleteRows(at: [path], with: .left)
+        }
     }
     
     func configCell(for cell: UITableViewCell, with item: Checklist) {
@@ -268,5 +272,20 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
                 self?.performSegue(withIdentifier: "showChecklistSegue", sender: ["checklist": list, "listItem": item])
             }
         }
+    }
+}
+
+// MARK:- ListDetailViewControllerDelegate
+extension AllListsViewController: ListDetailViewControllerDelegate {
+    func listDetailViewController(_ controller: ListDetailViewController, didFinishAdding list: Checklist) {
+        let path = IndexPath(row: checklists.count, section: 0)
+        checklists.append(list)
+        tableView.insertRows(at: [path], with: .bottom)
+    }
+    
+    func listDetailViewController(_ controller: ListDetailViewController, didFinishEditing list: Checklist) {
+        guard let i = checklists.firstIndex(of: list) else { return }
+        let path = IndexPath(row: i, section: 0)
+        tableView.reloadRows(at: [path], with: .automatic)
     }
 }

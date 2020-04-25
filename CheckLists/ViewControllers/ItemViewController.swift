@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol ItemViewControllerDelegate: class {
+    func itemViewController(_ controller: ItemViewController, didFinishAdding item: ChecklistItem)
+    func itemViewController(_ controller: ItemViewController, didFinishEditing item: ChecklistItem)
+}
+
 class ItemViewController: UITableViewController, UITextFieldDelegate {
     
     // MARK:- IBOutlets
@@ -16,7 +21,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var remindSwith: UISwitch!
     @IBOutlet weak var dueDatePicker: UIDatePicker!
-    @IBOutlet var datePickerCell: UITableViewCell!
+    @IBOutlet weak var datePickerCell: UITableViewCell!
     @IBOutlet weak var repeatSwitch: UISwitch!
     
     // MARK:- variables
@@ -25,6 +30,9 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     var dataModel: DataModel!
     var dueDate = Date()
     var isDatePickerVisible = false
+    var hud: HudView?
+    
+    weak var delegate: ItemViewControllerDelegate?
     
     // MARK:- view controller delegates
     override func viewDidLoad() {
@@ -165,48 +173,62 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func saveItem(_ item: ChecklistItem) {
+        showIndicator(for: .loading)
         dataModel.setListItem(item) {
             [weak self] state in
             guard let self = self else { return }
+            self.showIndicator(for: state)
             guard case DataState.success(_) = state else { return }
             self.dataModel.toggleNotification(for: item)
+            self.dismiss(animated: true, completion: nil)
             if self.itemToEdit == nil {
+                self.delegate?.itemViewController(self, didFinishAdding: item)
                 self.checklist.totalItems += 1
                 self.checklist.pendingCount += 1
                 self.dataModel.setList(self.checklist)
+                return
             }
-        self.dismiss(animated: true, completion: nil)
+            self.delegate?.itemViewController(self, didFinishEditing: item)
+        }
     }
-}
-
-// MARK:- IBActions
-@IBAction func cancel() {
-    dismiss(animated: true, completion: nil)
-}
-
-@IBAction func done() {
-    guard let item = itemToEdit else {
-        // itemToEdit is nil
-        let addedItem = ChecklistItem(
-            title: nameTextField?.text ?? "",
-            listID: checklist.listID,
-            shouldRemind: remindSwith.isOn,
-            shouldRepeat: repeatSwitch.isOn,
-            dueDate: dueDate)
-        
-        saveItem(addedItem)
-        return
+    
+    fileprivate func showIndicator(for state: DataState) {
+        hud?.removeFromSuperview()
+        hud = HudView.hud(inView: presentingViewController!.view,
+                              animated: true, state: state)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.hud?.hide()
+        }
     }
-    // itemToEdit is not nil
-    item.title = nameTextField?.text ?? ""
-    item.dueDate = dueDate
-    item.shouldRemind = remindSwith.isOn
-    item.shouldRepeat = repeatSwitch.isOn
-    saveItem(item)
-}
-
-@IBAction func dateChanged(_ sender: UIDatePicker) {
-    dueDate = sender.date
-    updateDateLabel()
-}
+    
+    // MARK:- IBActions
+    @IBAction func cancel() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func done() {
+        guard let item = itemToEdit else {
+            // itemToEdit is nil
+            let addedItem = ChecklistItem(
+                title: nameTextField?.text ?? "",
+                listID: checklist.listID,
+                shouldRemind: remindSwith.isOn,
+                shouldRepeat: repeatSwitch.isOn,
+                dueDate: dueDate)
+            
+            saveItem(addedItem)
+            return
+        }
+        // itemToEdit is not nil
+        item.title = nameTextField?.text ?? ""
+        item.dueDate = dueDate
+        item.shouldRemind = remindSwith.isOn
+        item.shouldRepeat = repeatSwitch.isOn
+        saveItem(item)
+    }
+    
+    @IBAction func dateChanged(_ sender: UIDatePicker) {
+        dueDate = sender.date
+        updateDateLabel()
+    }
 }

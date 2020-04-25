@@ -147,7 +147,7 @@ class DataModel {
         }
     }
     
-    func getListItems(for listID: String, where term: [String:Any]?, then completion: DataCompletion? = nil) {
+    func getListItems(in listID: String, where term: [String:Any]? = nil, then completion: DataCompletion? = nil) {
         var query = store.collection("checklist-items")
             .whereField("userID", isEqualTo: userID)
             .whereField("listID", isEqualTo: listID)
@@ -157,9 +157,7 @@ class DataModel {
                 .whereField(term["field"] as! String, isEqualTo: term["value"]!)
         }
         
-        query
-            .getDocuments {
-                data, error in
+        query.getDocuments { data, error in
                 if let error = error { completion?(.error(error)); return }
                 let items: [ChecklistItem?] = data!.documents.map { doc in
                     let res = Result {

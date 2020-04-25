@@ -39,7 +39,6 @@ class AuthViewController: UIViewController {
             let lastTab = tab.viewControllers?.last as? ProfileViewController {
             
             let dataModel = DataModel()
-            mainTab.auth = authController
             mainTab.dataModel = dataModel
             
             lastTab.auth = authController

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		43217BCB244CB6F000A20F25 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43217BCA244CB6F000A20F25 /* AuthViewController.swift */; };
 		4344F04B24437DA9006FE64F /* StringExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4344F04A24437DA9006FE64F /* StringExtentions.swift */; };
+		43610E9324546A2500601368 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9224546A2500601368 /* HudView.swift */; };
 		437B5132243F8599001EC7BF /* AllListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5131243F8599001EC7BF /* AllListsViewController.swift */; };
 		437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5137243FC225001EC7BF /* ListDetailViewController.swift */; };
 		437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5139243FF3D1001EC7BF /* DataModel.swift */; };
@@ -28,6 +29,7 @@
 /* Begin PBXFileReference section */
 		43217BCA244CB6F000A20F25 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		4344F04A24437DA9006FE64F /* StringExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtentions.swift; sourceTree = "<group>"; };
+		43610E9224546A2500601368 /* HudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
 		437B5131243F8599001EC7BF /* AllListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllListsViewController.swift; sourceTree = "<group>"; };
 		437B5137243FC225001EC7BF /* ListDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailViewController.swift; sourceTree = "<group>"; };
 		437B5139243FF3D1001EC7BF /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
@@ -67,6 +69,14 @@
 				A0808B69214B98B42EB7C90C /* Pods-CheckLists.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		43610E91245469ED00601368 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				43610E9224546A2500601368 /* HudView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		4384B23924402125000A5CED /* ViewControllers */ = {
@@ -138,6 +148,7 @@
 		43FD7EBA243CC52D006FAAB1 /* CheckLists */ = {
 			isa = PBXGroup;
 			children = (
+				43610E91245469ED00601368 /* Views */,
 				438E6A3B245386D300B3043D /* Controllers */,
 				43964FB52440A909007AFB04 /* helpers */,
 				4384B23B24402158000A5CED /* Resources */,
@@ -285,6 +296,7 @@
 				43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */,
 				437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */,
 				437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */,
+				43610E9324546A2500601368 /* HudView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

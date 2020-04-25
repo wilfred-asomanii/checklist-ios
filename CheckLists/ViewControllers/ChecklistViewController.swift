@@ -17,7 +17,7 @@ class ChecklistViewController: UITableViewController {
     var items = [ChecklistItem]()
     var item: ChecklistItem? // this will be passed if a notification of said item is tapped
     var dataModel: DataModel!
-    var listener: ListenerRegistration?
+    var hud: HudView?
     
     // MARK:- view controller methods
     override func viewDidLoad() {
@@ -29,51 +29,21 @@ class ChecklistViewController: UITableViewController {
             return
         }
         title = checklist.title
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        listenForData()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        listener?.remove()
-    }
-    
-    func listenForData() {
-        listener = dataModel.listenListItems(in: checklist.listID) {
-            [weak self] state in
-            if case DataState.success(let items as [ChecklistItem]) = state {
-                self?.items = items
-                self?.tableView.reloadSections([0], with: .automatic)
-                
-                // briefly highlight listItem if one was passed
-                guard let self = self,
-                    let item = self.item,
-                    let index = items.firstIndex(of: item) else { return }
-                
-                let indexPath = IndexPath(row: index, section: 0)
-                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                self.tableView.deselectRow(at: indexPath, animated: true)
-                self.item = nil
-            }
-        }
+        loadData()
     }
     
     // MARK: Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // this method is called right before a seque navigation.
-        // use it to pass data to the next screen
-        // the sender parameter here is the basically what trigured the segue
         if segue.identifier == "AddItemSegue" {
             let navController = segue.destination as! UINavigationController
             let controller = navController.topViewController as! ItemViewController
+            controller.delegate = self
             controller.dataModel = dataModel
             controller.checklist = checklist
         } else if segue.identifier == "EditItemSegue" {
             let navController = segue.destination as! UINavigationController
             let controller = navController.topViewController as! ItemViewController
+            controller.delegate = self
             controller.checklist = checklist
             controller.dataModel = dataModel
             // in this case, the triger of the segue is a cell
@@ -98,12 +68,11 @@ class ChecklistViewController: UITableViewController {
             cell = tableView.dequeueReusableCell(withIdentifier: "listItem", for: indexPath)
         }
         
-        configureCheckMarkNText(for: cell, with: item)
+        configCell(for: cell, with: item)
         
         return cell
     }
     
-    // something like android's onclick
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let _ = tableView.cellForRow(at: indexPath) {
             let item = items[indexPath.row]
@@ -114,6 +83,7 @@ class ChecklistViewController: UITableViewController {
                 dataModel.toggleNotification(for: item)
             }
             item.toggleChecked()
+            tableView.reloadRows(at: [indexPath], with: .automatic)
             dataModel.setListItem(item) { [weak self] state in
                 guard let self = self, case DataState.success(_) = state else { return }
                 self.checklist.pendingCount += item.isChecked ? -1 : 1
@@ -124,7 +94,9 @@ class ChecklistViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        removeItem(at: indexPath)
+        if case UITableViewCell.EditingStyle.delete = editingStyle {
+            removeItem(at: indexPath)
+        }
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
@@ -146,36 +118,67 @@ class ChecklistViewController: UITableViewController {
     
     // MARK:- member functions
     
-    func removeItem(at path: IndexPath) {
-        let deletedItem = self.items.remove(at: path.row)
-        dataModel.removeListItem(deletedItem) {
-            [weak self] state in
-            if let self = self, case DataState.success(_) = state {
-                self.checklist.pendingCount += !deletedItem.isChecked ? -1 : 0
-                self.checklist.totalItems -= 1
-                self.dataModel.setList(self.checklist)
-                if deletedItem.shouldRemind {
-                    deletedItem.shouldRemind = false
-                    deletedItem.shouldRepeat = false
-                    self.dataModel.toggleNotification(for: deletedItem)
-                }
+    func loadData() {
+        showIndicator(for: .loading)
+        dataModel.getListItems(in: checklist.listID) { [weak self] state in
+            self?.showIndicator(for: state)
+            if case DataState.success(let items as [ChecklistItem]) = state {
+                self?.items = items
+                self?.tableView.reloadSections([0], with: .automatic)
+                
+                // briefly highlight listItem if one was passed
+                guard let self = self,
+                    let item = self.item,
+                    let index = items.firstIndex(of: item) else { return }
+                
+                let indexPath = IndexPath(row: index, section: 0)
+                self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                self.tableView.deselectRow(at: indexPath, animated: true)
+                self.item = nil
             }
         }
     }
     
-    func configureCheckMarkNText(for cell: UITableViewCell, with item: ChecklistItem) {
+    fileprivate func showIndicator(for state: DataState) {
+        hud?.removeFromSuperview()
+        hud = HudView.hud(inView: navigationController!.view,
+                              animated: true, state: state)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.hud?.hide()
+        }
+    }
+    
+    func removeItem(at path: IndexPath) {
+        showIndicator(for: .loading)
+        let deletedItem = self.items.remove(at: path.row)
+        dataModel.removeListItem(deletedItem) {
+            [weak self] state in
+            self?.showIndicator(for: state)
+            guard let self = self,
+                case DataState.success(_) = state else { return }
+            self.tableView.deleteRows(at: [path], with: .left)
+            self.checklist.pendingCount += !deletedItem.isChecked ? -1 : 0
+            self.checklist.totalItems -= 1
+            self.dataModel.setList(self.checklist)
+            guard deletedItem.shouldRemind else { return }
+            deletedItem.shouldRemind = false
+            deletedItem.shouldRepeat = false
+            self.dataModel.toggleNotification(for: deletedItem)
+        }
+    }
+    
+    func configCell(for cell: UITableViewCell, with item: ChecklistItem) {
         cell.textLabel?.text = item.title
         cell.textLabel?.numberOfLines = 2
         
-        if item.shouldRemind {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
-            cell.detailTextLabel?.text = "Due \(formatter.string(from: item.dueDate))"
-            cell.detailTextLabel?.textColor = item.dueDate < Date() ? .systemRed : .systemPurple
-        }
-        
         cell.accessoryType = item.isChecked ? .checkmark : .none
+        
+        guard item.shouldRemind else { return }
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        cell.detailTextLabel?.text = "Due \(formatter.string(from: item.dueDate))"
+        cell.detailTextLabel?.textColor = item.dueDate < Date() ? .systemRed : .systemPurple
     }
     
     func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
@@ -190,3 +193,16 @@ class ChecklistViewController: UITableViewController {
     }
 }
 
+// MARK:- ItemViewControllerDelegate
+extension ChecklistViewController: ItemViewControllerDelegate {
+    func itemViewController(_ controller: ItemViewController, didFinishEditing item: ChecklistItem) {
+        guard let index = items.firstIndex(of: item) else { return }
+        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+    }
+    
+    func itemViewController(_ controller: ItemViewController, didFinishAdding item: ChecklistItem) {
+        let path = IndexPath(row: items.count, section: 0)
+        items.append(item)
+        tableView.insertRows(at: [path], with: .bottom)
+    }
+}
