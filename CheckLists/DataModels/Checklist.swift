@@ -13,16 +13,33 @@ import Foundation
 // similar to NSCoder which xcode uses to write storyboards to file and ios uses to load app's story board
 class Checklist: NSObject, Codable {
 
-    var listID: Int
+    var userID: String = ""
+    var listID: String
+    var pendingCount: Int {
+        didSet {
+            if pendingCount < 0 {
+                pendingCount = 0
+            }
+        }
+    }
+    var totalItems: Int {
+        didSet {
+            if totalItems < 0 {
+                totalItems = 0
+            }
+        }
+    }
     var title: String
     var iconName: String
-    var items: [ChecklistItem]
 
-    internal init(title: String, listID: Int = DataModel.nextChecklistID(), iconName: String = "No Icon", listItems: [ChecklistItem] = []) {
+    internal init(title: String, listID: String = DataModel.nextChecklistUID(),
+                  pendingCount: Int = 0, totalItems: Int = 0,
+                  iconName: String = "No Icon") {
         self.listID = listID
         self.title = title
-        self.items = listItems
         self.iconName = iconName
+        self.pendingCount = pendingCount
+        self.totalItems = totalItems
 
         super.init()
     }
@@ -30,19 +47,22 @@ class Checklist: NSObject, Codable {
 
 class ChecklistItem: NSObject, Codable {
 
-    var itemID: Int
+    var userID: String = ""
+    var itemID: String
+    var listID: String
     var title: String
     var isChecked, shouldRemind, shouldRepeat: Bool
     var dueDate: Date
 
 
-    internal init(title: String, isChecked: Bool = false, shouldRemind: Bool = false, shouldRepeat: Bool = false, itemID: Int = DataModel.nextChecklistItemID(), dueDate: Date = Date()) {
+    internal init(title: String, listID: String, isChecked: Bool = false, shouldRemind: Bool = false, shouldRepeat: Bool = false, itemID: String = DataModel.nextChecklistItemID(), dueDate: Date = Date()) {
         self.title = title
         self.isChecked = isChecked
         self.shouldRemind = shouldRemind
         self.shouldRepeat = shouldRepeat
         self.dueDate = dueDate
         self.itemID = itemID
+        self.listID = listID
 
         super.init()
     }

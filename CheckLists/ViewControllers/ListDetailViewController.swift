@@ -6,11 +6,6 @@
 //  Copyright © 2020 Wilfred Asomani. All rights reserved.
 //
 
-protocol ListDetailDelegate: class {
-    func listDetailView(_ viewController: ListDetailViewController, addedChecklist list: Checklist)
-    func listDetailView(_ viewController: ListDetailViewController, editedChecklist list: Checklist)
-}
-
 import UIKit
 
 class ListDetailViewController: UITableViewController, UITextFieldDelegate, IconPickerViewControllerDelegate {
@@ -19,7 +14,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
     @IBOutlet weak var doneBarButton: UIBarButtonItem?
     @IBOutlet weak var iconCell: UITableViewCell!
 
-    weak var delegate: ListDetailDelegate?
+    var dataModel: DataModel!
     var checklist: Checklist?
     var iconName = "No Icon"
 
@@ -74,6 +69,14 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         doneBarButton?.isEnabled = false
         return true
     }
+    
+    func saveList(_ list: Checklist) {
+        dataModel.setList(list) { [weak self] state in
+            if case DataState.success(_) = state {
+                self?.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
 
     // MARK:- icon picker delegate
     func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
@@ -94,12 +97,11 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
 
     @IBAction func done(_ sender: Any) {
         guard let checklist = checklist else {
-            delegate?.listDetailView(self, addedChecklist: Checklist(title: titleTextField?.text ?? "", iconName: iconName))
-            dismiss(animated: true, completion: nil)
+            let list = Checklist(title: titleTextField?.text ?? "", iconName: iconName)
+            saveList(list)
             return
         }
         checklist.title = titleTextField?.text ?? ""
-        delegate?.listDetailView(self, editedChecklist: checklist)
-        dismiss(animated: true, completion: nil)
+        saveList(checklist)
     }
 }

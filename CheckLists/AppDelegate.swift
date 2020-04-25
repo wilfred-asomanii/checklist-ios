@@ -8,43 +8,36 @@
 
 import UIKit
 import UserNotifications
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
-    let dataModel = DataModel()
+    var fireAuth: FirebaseAuth.Auth?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        FirebaseApp.configure()
 
         let center = UNUserNotificationCenter.current()
         center.delegate = self
-
-        //        let content = UNMutableNotificationContent()
-        //        content.title = "test"
-        //        content.body = "asdsadasdsadsdsadsd"
-        //        content.sound = .default
-        //        content.userInfo = ["itemID": 5, "listID": 4]
-        //
-        //        let request = UNNotificationRequest(identifier: "asd", content: content, trigger: nil)
-        //        center.add(request, withCompletionHandler: nil)
-
-
-        _ = dataModel.loadData()
+        
         let controller = window?.rootViewController as? UINavigationController
-        let allListsView = controller?.viewControllers.first as? AllListsViewController
-        allListsView?.dataModel = dataModel
+        let authViewController = controller?.viewControllers.first as? AuthViewController
+        authViewController?.authController = AuthController()
 
         return true
     }
 
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        
+    }
+
     func applicationDidEnterBackground(_ application: UIApplication) {
-        saveData()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        saveData()
     }
 
     // MARK:- user notification delegates
@@ -61,17 +54,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             return
         }
 
-        let controller = window?.rootViewController as? UINavigationController
-        let allListsView = controller?.viewControllers.first as? AllListsViewController
-        allListsView?.notificationTapped(for: itemID as! Int, inList: listID as! Int)
+        let rootView = window?.rootViewController as? UINavigationController
+        let tabController = rootView?.viewControllers[1] as? UITabBarController
+        tabController?.selectedIndex = 0
+        let firstTab = tabController?.viewControllers?.first as? UINavigationController
+        let allListsView = firstTab?.viewControllers.first as? AllListsViewController
+        allListsView?.notificationTapped(for: itemID as! String, in: listID as! String)
 
         completionHandler()
-    }
-
-
-    // MARK:- helper methods
-    func saveData() {
-        dataModel.saveData()
     }
 }
 
