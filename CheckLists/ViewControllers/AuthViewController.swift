@@ -38,11 +38,11 @@ class AuthViewController: UIViewController {
             let mainTab = controller.viewControllers.first as? AllListsViewController,
             let lastTab = tab.viewControllers?.last as? ProfileViewController {
             
-            let dataModel = DataModel()
-            mainTab.dataModel = dataModel
+            let dataController = DataController()
+            mainTab.dataController = dataController
             
             lastTab.auth = authController
-            lastTab.dataModel = dataModel
+            lastTab.dataController = dataController
             navigationController?.pushViewController(tab, animated: true)
             dismiss(animated: true, completion: nil)
         }

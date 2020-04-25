@@ -19,7 +19,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
     @IBOutlet weak var doneBarButton: UIBarButtonItem?
     @IBOutlet weak var iconCell: UITableViewCell!
     
-    var dataModel: DataModel!
+    var dataController: DataController!
     weak var delegate: ListDetailViewControllerDelegate?
     var checklist: Checklist?
     var iconName = "No Icon"
@@ -78,7 +78,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
     
     func saveList(_ list: Checklist) {
         showIndicator(for: .loading)
-        dataModel.setList(list) { [weak self] state in
+        dataController.setList(list) { [weak self] state in
             self?.showIndicator(for: state)
             guard case DataState.success(_) = state else { return }
             guard let self = self else { return }

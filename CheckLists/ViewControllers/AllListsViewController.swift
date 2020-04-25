@@ -17,7 +17,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     let cellIdentier = "list-cell"
     let searchController = UISearchController(searchResultsController: nil)
     
-    var dataModel: DataModel!
+    var dataController: DataController!
     var checklists = [Checklist]()
     var searchMatches = [Checklist]()
     var isSearching: Bool {
@@ -32,7 +32,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
         tabBarController?.navigationController?.navigationBar.isHidden = true
         navigationItem.hidesBackButton = true
         navigationItem.leftBarButtonItem = editButtonItem
-                
+        
         // search controller stuff
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -58,21 +58,21 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
             let controller = segue.destination as! ChecklistViewController
             if let checklist = sender as? Checklist {
                 controller.checklist = checklist
-                controller.dataModel = dataModel
+                controller.dataController = dataController
                 openedIndex = checklists.firstIndex(of: checklist)
             } else if let data = sender as? [String: Any],
                 let checklist = data["checklist"] as? Checklist,
                 let item = data["listItem"] as? ChecklistItem {
                 controller.checklist = checklist
                 controller.item = item
-                controller.dataModel = dataModel
+                controller.dataController = dataController
                 openedIndex = checklists.firstIndex(of: checklist)
             }
         } else if segue.identifier == "listDetailSegue" {
             let navController = segue.destination as! UINavigationController
             if let controller = navController.topViewController as? ListDetailViewController {
                 controller.delegate = self
-                controller.dataModel = dataModel
+                controller.dataController = dataController
                 if let path = sender as? IndexPath {
                     controller.checklist = checklists[path.row]
                 }
@@ -103,16 +103,11 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let with = isSearching ? searchMatches[indexPath.row] : checklists[indexPath.row]
+        let list = isSearching ? searchMatches[indexPath.row] : checklists[indexPath.row]
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentier) else {
-            let newCell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentier)
-            newCell.accessoryType = .disclosureIndicator
-            configCell(for: newCell, with: with)
-            return newCell
-        }
-        cell.accessoryType = .disclosureIndicator
-        configCell(for: cell, with: with)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentier) as! ListCell
+    
+        cell.configure(with: list, highlight: searchController.searchBar.text ?? "")
         
         return cell
     }
@@ -176,7 +171,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     
     func loadData() {
         showIndicator(for: .loading)
-        dataModel.getLists { [weak self] state in
+        dataController.getLists { [weak self] state in
             self?.showIndicator(for: state)
             guard case DataState.success(let lists as [Checklist]) = state  else { return }
             self?.checklists = lists
@@ -188,7 +183,7 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     fileprivate func showIndicator(for state: DataState) {
         hud?.removeFromSuperview()
         hud = HudView.hud(inView: navigationController!.view,
-                              animated: true, state: state)
+                          animated: true, state: state)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             self.hud?.hide()
         }
@@ -199,51 +194,16 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
             return nil
         }
         vc.checklist = checklist
-        vc.dataModel = dataModel
+        vc.dataController = dataController
         return vc
     }
     
     func removeList(at path: IndexPath) {
         let list = checklists.remove(at: path.row)
-        showIndicator(for: .loading)
-        dataModel.removeList(list) { [weak self] state in
-            self?.showIndicator(for: state)
-            guard let self = self,
-                case DataState.success(_) = state else { return }
-            self.tableView.deleteRows(at: [path], with: .left)
-        }
+        dataController.removeList(list)
+        self.tableView.deleteRows(at: [path], with: .left)
     }
-    
-    func configCell(for cell: UITableViewCell, with item: Checklist) {
-        let title = item.title
-        let attrString: NSMutableAttributedString = NSMutableAttributedString(string: title)
-        
-        let ranges = title.ranges(of: searchController.searchBar.text ?? "")
-        
-        for range in ranges {
-            let nsRange = NSRange(range, in: title)
-            attrString.addAttribute(.foregroundColor, value: UIColor.systemPurple, range: nsRange)
-            attrString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 20), range: nsRange)
-        }
-        
-        cell.textLabel?.attributedText = attrString
-        cell.imageView?.image = UIImage(named: item.iconName)
-        cell.imageView?.tintColor = .systemPurple
-        
-        let count = item.pendingCount
-        
-        switch count {
-        case let x where x == 0 && item.totalItems > 0:
-            cell.detailTextLabel?.text = "All done 🎊!"
-        case let x where x == 0 && item.totalItems == 0:
-            cell.detailTextLabel?.text = "Nothing to do 🤦🏽‍♂️"
-        case let x where x < 3:
-            cell.detailTextLabel?.text = "Almost there! 😬"
-        default:
-            cell.detailTextLabel?.text = "\(count) things remain 🥺"
-        }
-    }
-    
+
     func swipeActionTapped(action: UIContextualAction, view: UIView, handler: (Bool) -> Void, indexPath: IndexPath) {
         let title = action.title ?? ""
         
@@ -256,9 +216,9 @@ class AllListsViewController: UITableViewController, UINavigationControllerDeleg
     }
     
     func notificationTapped(for itemID: String, in listID: String) {
-        dataModel.getList(listID) { [weak self] state in
+        dataController.getList(listID) { [weak self] state in
             guard case DataState.success(let list as Checklist) = state else { return }
-            self?.dataModel.getListItem(itemID) { [weak self] state in
+            self?.dataController.getListItem(itemID) { [weak self] state in
                 guard case DataState.success(let item as ChecklistItem) = state else { return }
                 let topView = self?.navigationController?.topViewController as? AllListsViewController
                 if topView == nil {

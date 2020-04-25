@@ -18,7 +18,7 @@ class ProfileViewController: UITableViewController {
     @IBOutlet weak var deletAccCell: UITableViewCell!
     
     var auth: AuthController!
-    var dataModel: DataModel!
+    var dataController: DataController!
     
     
     override func viewDidLoad() {

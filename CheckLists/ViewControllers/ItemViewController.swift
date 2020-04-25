@@ -27,7 +27,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     // MARK:- variables
     var itemToEdit: ChecklistItem?
     var checklist: Checklist!
-    var dataModel: DataModel!
+    var dataController: DataController!
     var dueDate = Date()
     var isDatePickerVisible = false
     var hud: HudView?
@@ -174,18 +174,18 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     
     func saveItem(_ item: ChecklistItem) {
         showIndicator(for: .loading)
-        dataModel.setListItem(item) {
+        dataController.setListItem(item) {
             [weak self] state in
             guard let self = self else { return }
             self.showIndicator(for: state)
             guard case DataState.success(_) = state else { return }
-            self.dataModel.toggleNotification(for: item)
+            self.dataController.toggleNotification(for: item)
             self.dismiss(animated: true, completion: nil)
             if self.itemToEdit == nil {
                 self.delegate?.itemViewController(self, didFinishAdding: item)
                 self.checklist.totalItems += 1
                 self.checklist.pendingCount += 1
-                self.dataModel.setList(self.checklist)
+                self.dataController.setList(self.checklist)
                 return
             }
             self.delegate?.itemViewController(self, didFinishEditing: item)

@@ -1,5 +1,5 @@
 //
-//  DataModel.swift
+//  DataController.swift
 //  CheckLists
 //
 //  Created by Wilfred Asomani on 10/04/2020.
@@ -20,7 +20,7 @@ enum DataState {
 
 typealias DataCompletion = (DataState) -> Void
 
-class DataModel {
+class DataController {
     private var store: Firestore {
         Firestore.firestore()
     }
@@ -112,14 +112,10 @@ class DataModel {
         }
     }
     
-    func removeList(_ list: Checklist, then completion: DataCompletion? = nil) {
+    func removeList(_ list: Checklist) {
         store.collection("checklists").document("\(list.listID)").delete { [weak self] error in
-            if let error = error {
-                completion?(.error(error))
-                return
-            }
+            if let _ = error { return }
             self?.bulkDeleteItems(for: list.listID, where: ["field": "shouldRemind", "value": true])
-            completion?(.success(nil))
         }
     }
     
@@ -227,13 +223,20 @@ class DataModel {
         }
     }
     
-    func removeListItem(_ item: ChecklistItem, then completion: DataCompletion? = nil) {
+    func removeListItem(_ item: ChecklistItem, in checklist: Checklist, then completion: DataCompletion? = nil) {
         store.collection("checklist-items").document("\(item.itemID)").delete { error in
             if let error = error {
                 completion?(.error(error))
                 return
             }
             completion?(.success(nil))
+            checklist.pendingCount += !item.isChecked ? -1 : 0
+            checklist.totalItems -= 1
+            self.setList(checklist)
+            guard item.shouldRemind else { return }
+            item.shouldRemind = false
+            item.shouldRepeat = false
+            self.toggleNotification(for: item)
         }
     }
     
@@ -273,8 +276,6 @@ class DataModel {
     }
     
     // MARK:- class funcs
-    // these functions can be called without refference to an instance of this class as opposed to instance methods
-    // eg: DataModel.classFunc() vs DataModel().instanceFunc()
     class func nextChecklistItemID() -> String {
         let userDefaults = UserDefaults.standard
         let currentID = userDefaults.integer(forKey: "ChecklistItemID")

@@ -10,9 +10,13 @@
 		43217BCB244CB6F000A20F25 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43217BCA244CB6F000A20F25 /* AuthViewController.swift */; };
 		4344F04B24437DA9006FE64F /* StringExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4344F04A24437DA9006FE64F /* StringExtentions.swift */; };
 		43610E9324546A2500601368 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9224546A2500601368 /* HudView.swift */; };
+		43610E9524547F0200601368 /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9424547F0200601368 /* ListCell.swift */; };
+		43610E9724547F1300601368 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9624547F1300601368 /* ItemCell.swift */; };
+		43610E9924547FAF00601368 /* RemindItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9824547FAF00601368 /* RemindItemCell.swift */; };
+		43610E9B245483B200601368 /* ChecklistItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9A245483B200601368 /* ChecklistItem.swift */; };
 		437B5132243F8599001EC7BF /* AllListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5131243F8599001EC7BF /* AllListsViewController.swift */; };
 		437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5137243FC225001EC7BF /* ListDetailViewController.swift */; };
-		437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5139243FF3D1001EC7BF /* DataModel.swift */; };
+		437B513A243FF3D1001EC7BF /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5139243FF3D1001EC7BF /* DataController.swift */; };
 		438E6A3A2453839800B3043D /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 438E6A392453839800B3043D /* ProfileViewController.swift */; };
 		438E6A3D245386E300B3043D /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 438E6A3C245386E300B3043D /* AuthController.swift */; };
 		43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B64F50243D4BEB00D313EA /* ItemViewController.swift */; };
@@ -30,9 +34,13 @@
 		43217BCA244CB6F000A20F25 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		4344F04A24437DA9006FE64F /* StringExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtentions.swift; sourceTree = "<group>"; };
 		43610E9224546A2500601368 /* HudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
+		43610E9424547F0200601368 /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
+		43610E9624547F1300601368 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
+		43610E9824547FAF00601368 /* RemindItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindItemCell.swift; sourceTree = "<group>"; };
+		43610E9A245483B200601368 /* ChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistItem.swift; sourceTree = "<group>"; };
 		437B5131243F8599001EC7BF /* AllListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllListsViewController.swift; sourceTree = "<group>"; };
 		437B5137243FC225001EC7BF /* ListDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDetailViewController.swift; sourceTree = "<group>"; };
-		437B5139243FF3D1001EC7BF /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		437B5139243FF3D1001EC7BF /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		438E6A392453839800B3043D /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		438E6A3C245386E300B3043D /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
 		43B64F50243D4BEB00D313EA /* ItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
@@ -75,6 +83,9 @@
 			isa = PBXGroup;
 			children = (
 				43610E9224546A2500601368 /* HudView.swift */,
+				43610E9424547F0200601368 /* ListCell.swift */,
+				43610E9624547F1300601368 /* ItemCell.swift */,
+				43610E9824547FAF00601368 /* RemindItemCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -97,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				43FD7ECF243CDDE6006FAAB1 /* Checklist.swift */,
-				437B5139243FF3D1001EC7BF /* DataModel.swift */,
+				43610E9A245483B200601368 /* ChecklistItem.swift */,
 			);
 			path = DataModels;
 			sourceTree = "<group>";
@@ -114,6 +125,7 @@
 		438E6A3B245386D300B3043D /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				437B5139243FF3D1001EC7BF /* DataController.swift */,
 				438E6A3C245386E300B3043D /* AuthController.swift */,
 			);
 			path = Controllers;
@@ -287,6 +299,7 @@
 				43FD7EC0243CC52D006FAAB1 /* ChecklistViewController.swift in Sources */,
 				438E6A3D245386E300B3043D /* AuthController.swift in Sources */,
 				43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */,
+				43610E9524547F0200601368 /* ListCell.swift in Sources */,
 				43217BCB244CB6F000A20F25 /* AuthViewController.swift in Sources */,
 				437B5132243F8599001EC7BF /* AllListsViewController.swift in Sources */,
 				43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */,
@@ -295,8 +308,11 @@
 				43FD7ED0243CDDE6006FAAB1 /* Checklist.swift in Sources */,
 				43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */,
 				437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */,
-				437B513A243FF3D1001EC7BF /* DataModel.swift in Sources */,
+				437B513A243FF3D1001EC7BF /* DataController.swift in Sources */,
+				43610E9924547FAF00601368 /* RemindItemCell.swift in Sources */,
 				43610E9324546A2500601368 /* HudView.swift in Sources */,
+				43610E9B245483B200601368 /* ChecklistItem.swift in Sources */,
+				43610E9724547F1300601368 /* ItemCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
