@@ -191,12 +191,10 @@ protocol CheckListPreviewDelegate {
 
 extension ChecklistViewController {
     override var previewActionItems: [UIPreviewActionItem] {
-        let delAction = UIPreviewAction(title: "Delete", style: .destructive) {
-            print($0, $1)
+        let delAction = UIPreviewAction(title: "Delete", style: .destructive) { _, _ in
             self.previewDelegate?.checkListPreview(didDeleteFrom: self)
         }
-        let editAction = UIPreviewAction(title: "Edit", style: .default) {
-            print($0, $1)
+        let editAction = UIPreviewAction(title: "Edit", style: .default) { _, _ in
             self.previewDelegate?.checkListPreview(didEditFrom: self)
         }
         return [editAction, delAction]
