@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 import Firebase
+import FirebaseUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -38,6 +39,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+    }
+    
+    func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        if shortcutItem.type == "com.devwilfred.addlist" {
+            guard let rootView = window?.rootViewController as? UINavigationController else { return }
+            guard rootView.viewControllers.count > 1
+                else {
+                    // not logged in / current screen is auth controller
+                    return
+            }
+            guard let tabController = rootView.viewControllers[1] as? UITabBarController,
+                let firstTab = tabController.viewControllers?.first as? UINavigationController else { return }
+            tabController.selectedIndex = 0
+            firstTab.popToRootViewController(animated: true)
+            let allListsView = firstTab.viewControllers.first as? AllListsViewController
+            allListsView?.performSegue(withIdentifier: "listDetailSegue", sender: nil)
+        }
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String?
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication: sourceApplication) ?? false {
+          return true
+        }
+        // other URL handling goes here.
+        return false
     }
 
     // MARK:- user notification delegates

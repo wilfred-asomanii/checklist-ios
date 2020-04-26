@@ -33,7 +33,7 @@ class HudView {
         default:
             hud.textLabel.text = "Ooops!"
             hud.indicatorView = JGProgressHUDErrorIndicatorView()
-            hud.dismiss(afterDelay: 0.7)
+            hud.dismiss(afterDelay: 1.2)
             feedbackType = .error
         }
         if let feedbackType = feedbackType {

@@ -9,26 +9,35 @@
 import UIKit
 import FirebaseAuth
 import JGProgressHUD
+import FirebaseUI
 
 class AuthViewController: UIViewController {
     
-    @IBOutlet weak var visualEffectView: UIVisualEffectView!
-    @IBOutlet weak var emailField: UITextField!
-    @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var loginButton: UIButton!
+    @IBOutlet weak var logInButton: UIButton!
     
     var authController: AuthController!
+    var fireAuthController: UINavigationController?
     var hud: JGProgressHUD?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationController?.setToolbarHidden(true, animated: true)
-        if #available(iOS 13, *) {
-            visualEffectView.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        }
+        navigationController?.navigationBar.isHidden = true
+        
+        logInButton.layer.cornerRadius = 10
         
         guard let user = authController.currentUser else {
+            let authUI = FUIAuth.defaultAuthUI()!
+            authUI.delegate = self
+            authUI.providers = [
+                FUIEmailAuth(),
+                FUIGoogleAuth()
+            ]
+            authUI.shouldHideCancelButton = true
+            fireAuthController = authUI.authViewController()
+            fireAuthController?.navigationBar.tintColor = .systemPurple
+            fireAuthController?.navigationItem.title = "Choose Auth Method"
             return
         }
         navigateToMain(for: user)
@@ -46,14 +55,15 @@ class AuthViewController: UIViewController {
             lastTab.auth = authController
             lastTab.dataController = dataController
             navigationController?.pushViewController(tab, animated: true)
-            dismiss(animated: true, completion: nil)
         }
     }
     
     func authComplete(_ result: AuthDataResult?, _ error: Error?) {
         hud?.dismiss()
         guard error == nil else {
-                        hud = HudView.showIndicator(for: .error(error), in: view)
+//            if let err = error as NSError?, err.code != FUIAuthErrorCode.userCancelledSignIn.rawValue {
+                hud = HudView.showIndicator(for: .error(error), in: view)
+//            }
             return
         }
         hud = HudView.showIndicator(for: .success(nil), in: view)
@@ -61,21 +71,16 @@ class AuthViewController: UIViewController {
     }
     
     @IBAction func logIn(_ sender: Any) {
-        hud = HudView.showIndicator(for: .loading, in: view)
-        authController.signIn(withEmail: emailField.text!, password: passwordField.text!) {
-            [weak self] result, err in
-            self?.authComplete(result, err)
-        }
+        present(fireAuthController!, animated: true, completion: nil)
     }
-    @IBAction func enterPressed(_ sender: UITextField) {
-        if sender == emailField {
-            emailField.resignFirstResponder()
-            passwordField.becomeFirstResponder()
-            return
+}
+
+// MARK:- firebase auth ui delegates
+extension AuthViewController: FUIAuthDelegate {
+    func authUI(_ authUI: FUIAuth, didSignInWith authDataResult: AuthDataResult?, error: Error?) {
+        fireAuthController?.dismiss(animated: true) {
+            self.fireAuthController?.popToRootViewController(animated: false)
         }
-        if sender == passwordField {
-            passwordField.resignFirstResponder()
-            logIn(sender)
-        }
+        authComplete(authDataResult, error)
     }
 }
