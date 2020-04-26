@@ -8,13 +8,11 @@
 
 import UIKit
 
-protocol IconPickerViewControllerDelegate: class {
-    func iconPicker(_ picker: IconPickerViewController, didPick iconName: String)
-}
+typealias DidPickIcon = (String) -> Void
 
 class IconPickerViewController: UITableViewController {
 
-    var pickerDelegate: IconPickerViewControllerDelegate?
+    var didPick: DidPickIcon?
 
     let icons = [ "No Icon", "Appointments", "Birthdays", "Chores",
      "Drinks", "Folder", "Groceries", "Inbox", "Photos", "Trips" ]
@@ -42,7 +40,7 @@ class IconPickerViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        pickerDelegate?.iconPicker(self, didPick: icons[indexPath.row])
+        didPick?(icons[indexPath.row])
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

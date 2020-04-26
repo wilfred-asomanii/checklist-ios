@@ -8,19 +8,16 @@
 
 import UIKit
 
-protocol ListDetailViewControllerDelegate: class {
-    func listDetailViewController(_ controller: ListDetailViewController, didFinishAdding list: Checklist)
-    func listDetailViewController(_ controller: ListDetailViewController, didFinishEditing list: Checklist)
-}
+typealias DidFinishSaving = (Checklist) -> Void
 
-class ListDetailViewController: UITableViewController, UITextFieldDelegate, IconPickerViewControllerDelegate {
+class ListDetailViewController: UITableViewController, UITextFieldDelegate {
     
     @IBOutlet weak var titleTextField: UITextField?
     @IBOutlet weak var doneBarButton: UIBarButtonItem?
     @IBOutlet weak var iconCell: UITableViewCell!
     
     var dataController: DataController!
-    weak var delegate: ListDetailViewControllerDelegate?
+    var didFinishSaving: DidFinishSaving?
     var checklist: Checklist?
     var iconName = "No Icon"
     var hud: HudView?
@@ -43,7 +40,16 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
         
         if segue.identifier == "pickIconSegue" {
             let controller = segue.destination as? IconPickerViewController
-            controller?.pickerDelegate = self
+            controller?.didPick = { [weak self] iconName in
+                guard let self = self else { return }
+                self.doneBarButton?.isEnabled = true
+                self.checklist?.iconName = iconName
+                self.iconName = iconName
+                self.iconCell.imageView?.image = UIImage(named: iconName)
+                self.iconCell.imageView?.tintColor = .systemPurple
+                self.iconCell.textLabel?.text = iconName
+                self.navigationController?.popViewController(animated: true)
+            }
         }
     }
     
@@ -84,32 +90,20 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate, Icon
             guard let self = self else { return }
             self.dismiss(animated: true, completion: nil)
             guard self.checklist == nil else {
-                self.delegate?.listDetailViewController(self, didFinishEditing: list)
+                self.didFinishSaving?(list)
                 return
             }
-            self.delegate?.listDetailViewController(self, didFinishAdding: list)
+            self.didFinishSaving?(list)
         }
     }
     
     fileprivate func showIndicator(for state: DataState) {
         hud?.removeFromSuperview()
         hud = HudView.hud(inView: presentingViewController!.view,
-                              animated: true, state: state)
+                          animated: true, state: state)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             self.hud?.hide()
         }
-    }
-    
-    // MARK:- icon picker delegate
-    func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
-        doneBarButton?.isEnabled = true
-        checklist?.iconName = iconName
-        self.iconName = iconName
-        
-        iconCell.imageView?.image = UIImage(named: iconName)
-        iconCell.imageView?.tintColor = .systemPurple
-        iconCell.textLabel?.text = iconName
-        navigationController?.popViewController(animated: true)
     }
     
     // MARK:- IBActions

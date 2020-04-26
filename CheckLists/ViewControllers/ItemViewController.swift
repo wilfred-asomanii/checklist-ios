@@ -8,10 +8,7 @@
 
 import UIKit
 
-protocol ItemViewControllerDelegate: class {
-    func itemViewController(_ controller: ItemViewController, didFinishAdding item: ChecklistItem)
-    func itemViewController(_ controller: ItemViewController, didFinishEditing item: ChecklistItem)
-}
+typealias DidFinishSavingItem = (ChecklistItem, Checklist) -> Void
 
 class ItemViewController: UITableViewController, UITextFieldDelegate {
     
@@ -32,7 +29,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     var isDatePickerVisible = false
     var hud: HudView?
     
-    weak var delegate: ItemViewControllerDelegate?
+    var didFinishSaving: DidFinishSavingItem?
     
     // MARK:- view controller delegates
     override func viewDidLoad() {
@@ -182,20 +179,20 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
             self.dataController.toggleNotification(for: item)
             self.dismiss(animated: true, completion: nil)
             if self.itemToEdit == nil {
-                self.delegate?.itemViewController(self, didFinishAdding: item)
                 self.checklist.totalItems += 1
                 self.checklist.pendingCount += 1
+                self.didFinishSaving?(item, self.checklist)
                 self.dataController.setList(self.checklist)
                 return
             }
-            self.delegate?.itemViewController(self, didFinishEditing: item)
+            self.didFinishSaving?(item, self.checklist)
         }
     }
     
     fileprivate func showIndicator(for state: DataState) {
         hud?.removeFromSuperview()
         hud = HudView.hud(inView: presentingViewController!.view,
-                              animated: true, state: state)
+                          animated: true, state: state)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             self.hud?.hide()
         }

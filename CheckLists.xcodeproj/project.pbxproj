@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		43217BCB244CB6F000A20F25 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43217BCA244CB6F000A20F25 /* AuthViewController.swift */; };
 		4344F04B24437DA9006FE64F /* StringExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4344F04A24437DA9006FE64F /* StringExtentions.swift */; };
+		4351694F245500A80052E48A /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4351694E245500A80052E48A /* SearchViewController.swift */; };
 		43610E9324546A2500601368 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9224546A2500601368 /* HudView.swift */; };
 		43610E9524547F0200601368 /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9424547F0200601368 /* ListCell.swift */; };
 		43610E9724547F1300601368 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43610E9624547F1300601368 /* ItemCell.swift */; };
@@ -34,6 +35,7 @@
 /* Begin PBXFileReference section */
 		43217BCA244CB6F000A20F25 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		4344F04A24437DA9006FE64F /* StringExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtentions.swift; sourceTree = "<group>"; };
+		4351694E245500A80052E48A /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		43610E9224546A2500601368 /* HudView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
 		43610E9424547F0200601368 /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
 		43610E9624547F1300601368 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */,
 				43217BCA244CB6F000A20F25 /* AuthViewController.swift */,
 				438E6A392453839800B3043D /* ProfileViewController.swift */,
+				4351694E245500A80052E48A /* SearchViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				438E6A3D245386E300B3043D /* AuthController.swift in Sources */,
 				43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */,
 				43610E9524547F0200601368 /* ListCell.swift in Sources */,
+				4351694F245500A80052E48A /* SearchViewController.swift in Sources */,
 				43217BCB244CB6F000A20F25 /* AuthViewController.swift in Sources */,
 				437B5132243F8599001EC7BF /* AllListsViewController.swift in Sources */,
 				43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */,

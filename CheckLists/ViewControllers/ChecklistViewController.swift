@@ -9,10 +9,11 @@
 import UIKit
 import FirebaseFirestore
 
+typealias DidAction = (_ isDelete:Bool,Checklist) -> Void
 class ChecklistViewController: UITableViewController {
     
     // MARK:- instance variables/properties
-    var previewDelegate: CheckListPreviewDelegate?
+    var didAction: DidAction?
     var checklist: Checklist!
     var items = [ChecklistItem]()
     var item: ChecklistItem? // this will be passed if a notification of said item is tapped
@@ -23,6 +24,9 @@ class ChecklistViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItems?.append(editButtonItem)
+        
+        tableView.tableFooterView = UIView()
+
         guard let checklist = checklist else {
             navigationController?.popViewController(animated: true)
             return
@@ -33,26 +37,37 @@ class ChecklistViewController: UITableViewController {
     
     // MARK: Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "AddItemSegue" {
-            let navController = segue.destination as! UINavigationController
-            let controller = navController.topViewController as! ItemViewController
-            controller.delegate = self
-            controller.dataController = dataController
-            controller.checklist = checklist
-        } else if segue.identifier == "EditItemSegue" {
-            let navController = segue.destination as! UINavigationController
-            let controller = navController.topViewController as! ItemViewController
-            controller.delegate = self
-            controller.checklist = checklist
-            controller.dataController = dataController
-            // in this case, the triger of the segue is a cell
-            if let indexPath = tableView.indexPath(for: sender as! UITableViewCell) {
-                controller.itemToEdit = items[indexPath.row]
-            }
+        if segue.identifier == "AddItemSegue"
+            || segue.identifier == "EditItemSegue"  {
+            initItemViewSegue(segue, sender)
         }
     }
     
     // MARK:- member functions
+    
+    func initItemViewSegue(_ segue: UIStoryboardSegue, _ sender: Any?) {
+        let navController = segue.destination as! UINavigationController
+        let controller = navController.topViewController as! ItemViewController
+        controller.didFinishSaving = { [weak self] item, _ in
+            guard let self = self else { return }
+            guard let index = self.items.firstIndex(of: item) else {
+                // add
+                let path = IndexPath(row: self.items.count, section: 0)
+                self.items.append(item)
+                self.tableView.insertRows(at: [path], with: .bottom)
+                return
+            }
+            // update
+            self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        }
+        controller.checklist = checklist
+        controller.dataController = dataController
+        // in this case, the triger of the segue is a cell
+        if let cell = sender as? UITableViewCell,
+            let indexPath = tableView.indexPath(for: cell) {
+            controller.itemToEdit = items[indexPath.row]
+        }
+    }
     
     func loadData() {
         showIndicator(for: .loading)
@@ -168,34 +183,15 @@ extension ChecklistViewController {
     
 }
 
-// MARK:- ItemViewControllerDelegate
-extension ChecklistViewController: ItemViewControllerDelegate {
-    func itemViewController(_ controller: ItemViewController, didFinishEditing item: ChecklistItem) {
-        guard let index = items.firstIndex(of: item) else { return }
-        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-    }
-    
-    func itemViewController(_ controller: ItemViewController, didFinishAdding item: ChecklistItem) {
-        let path = IndexPath(row: items.count, section: 0)
-        items.append(item)
-        tableView.insertRows(at: [path], with: .bottom)
-    }
-}
-
 // MARK:- preview stuff
-
-protocol CheckListPreviewDelegate {
-    func checkListPreview(didDeleteFrom controller: ChecklistViewController)
-    func checkListPreview(didEditFrom controller: ChecklistViewController)
-}
 
 extension ChecklistViewController {
     override var previewActionItems: [UIPreviewActionItem] {
         let delAction = UIPreviewAction(title: "Delete", style: .destructive) { _, _ in
-            self.previewDelegate?.checkListPreview(didDeleteFrom: self)
+            self.didAction?(true, self.checklist)
         }
         let editAction = UIPreviewAction(title: "Edit", style: .default) { _, _ in
-            self.previewDelegate?.checkListPreview(didEditFrom: self)
+            self.didAction?(false, self.checklist)
         }
         return [editAction, delAction]
     }

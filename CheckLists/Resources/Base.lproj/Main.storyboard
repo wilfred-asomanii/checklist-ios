@@ -12,14 +12,13 @@
         <scene sceneID="oLG-p1-EeI">
             <objects>
                 <tableViewController storyboardIdentifier="CheckListViewController" id="QFZ-Be-fzW" userLabel="Checklist" customClass="ChecklistViewController" customModule="CheckLists" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="3A6-8e-bRd">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="3A6-8e-bRd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="remindListItem" editingAccessoryType="disclosureIndicator" textLabel="0aT-g1-l8G" detailTextLabel="RC9-Kb-Wxl" style="IBUITableViewCellStyleSubtitle" id="Lsx-0a-A9f" customClass="RemindItemCell" customModule="CheckLists" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="320" height="55.5"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Lsx-0a-A9f" id="Yo0-At-QJR">
                                     <rect key="frame" x="0.0" y="0.0" width="280" height="55.5"/>
@@ -46,7 +45,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="listItem" editingAccessoryType="disclosureIndicator" textLabel="3Aw-yz-5yT" style="IBUITableViewCellStyleDefault" id="yL5-9a-da4" customClass="ItemCell" customModule="CheckLists" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="111" width="320" height="43.5"/>
+                                <rect key="frame" x="0.0" y="83.5" width="320" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yL5-9a-da4" id="sP2-Id-FIU">
                                     <rect key="frame" x="0.0" y="0.0" width="280" height="43.5"/>
@@ -268,7 +267,7 @@
                     <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 </tableViewCell>
             </objects>
-            <point key="canvasLocation" x="4447.5" y="1613.0281690140846"/>
+            <point key="canvasLocation" x="4298" y="754"/>
         </scene>
         <!--Pick Icon-->
         <scene sceneID="mry-hB-Etp">
@@ -311,13 +310,12 @@
         <scene sceneID="3O2-Be-Qok">
             <objects>
                 <tableViewController storyboardIdentifier="AllListsViewController" id="XuR-hl-tVo" customClass="AllListsViewController" customModule="CheckLists" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="gJJ-c6-BSO">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="gJJ-c6-BSO">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="list-cell" textLabel="NRV-40-QnB" detailTextLabel="qh3-G1-DeN" style="IBUITableViewCellStyleSubtitle" id="T33-GI-DIU" customClass="ListCell" customModule="CheckLists" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="55.5" width="320" height="55.5"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="T33-GI-DIU" id="mXs-l4-yxO">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="55.5"/>
@@ -359,6 +357,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="dE6-9s-JlI" kind="presentation" identifier="AddItemSegue" id="pYq-5V-HN6"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KeK-3A-urY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -453,7 +454,7 @@
                             <outlet property="delegate" destination="ROb-ks-vPs" id="rJJ-gP-Yqa"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Add Item" largeTitleDisplayMode="never" id="aqI-v5-IqN">
+                    <navigationItem key="navigationItem" title="New List" largeTitleDisplayMode="never" id="aqI-v5-IqN">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="9Mg-yB-Ld0">
                             <color key="tintColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
@@ -596,7 +597,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GpT-3y-Jxz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3547.5" y="1613.0281690140846"/>
+            <point key="canvasLocation" x="3467" y="753"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="pdn-2g-FMA">
