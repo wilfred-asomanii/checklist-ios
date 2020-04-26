@@ -27,17 +27,18 @@ class AuthViewController: UIViewController {
         
         logInButton.layer.cornerRadius = 10
         
+        let authUI = FUIAuth.defaultAuthUI()!
+        authUI.delegate = self
+        authUI.providers = [
+            FUIEmailAuth(),
+            FUIGoogleAuth()
+        ]
+        authUI.shouldHideCancelButton = true
+        fireAuthController = authUI.authViewController()
+        fireAuthController?.navigationBar.tintColor = .systemPurple
+        fireAuthController?.navigationItem.title = "Choose Auth Method"
+        
         guard let user = authController.currentUser else {
-            let authUI = FUIAuth.defaultAuthUI()!
-            authUI.delegate = self
-            authUI.providers = [
-                FUIEmailAuth(),
-                FUIGoogleAuth()
-            ]
-            authUI.shouldHideCancelButton = true
-            fireAuthController = authUI.authViewController()
-            fireAuthController?.navigationBar.tintColor = .systemPurple
-            fireAuthController?.navigationItem.title = "Choose Auth Method"
             return
         }
         navigateToMain(for: user)
@@ -61,9 +62,9 @@ class AuthViewController: UIViewController {
     func authComplete(_ result: AuthDataResult?, _ error: Error?) {
         hud?.dismiss()
         guard error == nil else {
-//            if let err = error as NSError?, err.code != FUIAuthErrorCode.userCancelledSignIn.rawValue {
+            if let err = error as NSError?, err.code != FUIAuthErrorCode.userCancelledSignIn.rawValue {
                 hud = HudView.showIndicator(for: .error(error), in: view)
-//            }
+            }
             return
         }
         hud = HudView.showIndicator(for: .success(nil), in: view)
