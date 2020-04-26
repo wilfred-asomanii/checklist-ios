@@ -28,6 +28,7 @@ UISearchResultsUpdating {
     var hud: JGProgressHUD?
     
     let searchResController = SearchViewController()
+    var previewController: UIViewController?
     
     // MARK:- View controller methods
     override func viewDidLoad() {
@@ -71,7 +72,8 @@ UISearchResultsUpdating {
     func loadData() {
         showIndicator(for: .loading)
         dataController.getLists { [weak self] state in
-            self?.showIndicator(for: state)
+            self?.hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+            self?.hud?.dismiss(afterDelay: 0.7, animated: true)
             guard case DataState.success(let lists as [Checklist]) = state  else { return }
             self?.checklists = lists
             self?.initSearch()
@@ -279,7 +281,10 @@ extension AllListsViewController {
         let list = checklists[indexPath.row]
         let provider: UIContextMenuContentPreviewProvider?
         if list.totalItems > 0 {
-            provider = { return self.previewProvider(for: indexPath)}
+            provider = {
+                self.previewController = self.previewProvider(for: indexPath)
+                return self.previewController
+            }
         } else {
             provider = nil
         }
@@ -298,10 +303,10 @@ extension AllListsViewController {
         _ tableView: UITableView, willPerformPreviewActionForMenuWith
         configuration: UIContextMenuConfiguration,
         animator: UIContextMenuInteractionCommitAnimating) {
-        guard let id = configuration.identifier as? String,
-            let row = Int(id) else { return }
+       
         animator.addCompletion {
-            self.performSegue(withIdentifier: "showChecklistSegue", sender: self.checklists[row])
+            guard let controller = self.previewController else { return }
+            self.navigationController?.pushViewController(controller, animated: true)
         }
     }
     
@@ -320,30 +325,17 @@ extension AllListsViewController {
         let delete = UIAction(title: "Delete", image: UIImage(systemName: "bin.xmark"), identifier: nil, attributes: .destructive, state: .off, handler: { _ in
             self.removeList(at: path)
         })
-        let deleteMenu = UIMenu(title: "",
-                                options: .displayInline,
-                                children: [delete])
-        
-        let open = UIAction(title: "Open", image: UIImage(systemName: "ellipsis.circle"), identifier: nil, attributes: [], state: .off, handler: { _ in
-            self.performSegue(withIdentifier: "showChecklistSegue", sender: self.checklists[path.row])
-        })
+        let deleteMenu = UIMenu(title: "", options: .displayInline, children: [delete])
         let edit = UIAction(title: "Edit", image: UIImage(systemName: "pencil"), identifier: nil, attributes: [], state: .off, handler: { _ in
             self.performSegue(withIdentifier: "listDetailSegue", sender: path)
         })
-        
-        let listMenu = UIMenu(title: "",
-                              options: .displayInline,
-                              children: [open, edit])
-        
         let addItem = UIAction(title: "Add Item", image: UIImage(systemName: "plus.circle"), identifier: nil, attributes: [], state: .off, handler: { _ in
             self.openRow = path.row
             self.performSegue(withIdentifier: "AddItemSegue", sender: self.checklists[path.row])
         })
         
-        let itemMenu = UIMenu(title: "",
-                              options: .displayInline,
-                              children: [addItem])
+        let menu = UIMenu(title: "", options: .displayInline, children: [addItem, edit])
         
-        return [itemMenu, listMenu, deleteMenu]
+        return [menu, deleteMenu]
     }
 }

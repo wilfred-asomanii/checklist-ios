@@ -15,7 +15,6 @@ import FirebaseUI
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
-    var fireAuth: FirebaseAuth.Auth?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -23,10 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         let center = UNUserNotificationCenter.current()
         center.delegate = self
-        
-        let controller = window?.rootViewController as? UINavigationController
-        let authViewController = controller?.viewControllers.first as? AuthViewController
-        authViewController?.authController = AuthController()
 
         return true
     }

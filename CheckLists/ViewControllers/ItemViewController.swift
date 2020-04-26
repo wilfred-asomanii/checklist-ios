@@ -175,7 +175,8 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
         dataController.setListItem(item) {
             [weak self] state in
             guard let self = self else { return }
-            self.showIndicator(for: state)
+            self.hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+            self.hud?.dismiss(afterDelay: 0.7, animated: true)
             guard case DataState.success(_) = state else { return }
             self.dataController.toggleNotification(for: item)
             self.dismiss(animated: true, completion: nil)
@@ -192,7 +193,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     
     fileprivate func showIndicator(for state: DataState) {
         hud?.dismiss()
-        hud = HudView.showIndicator(for: state, in: view)
+        hud = HudView.showIndicator(for: state, in: presentingViewController!.view)
     }
     
     // MARK:- IBActions

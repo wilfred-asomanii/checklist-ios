@@ -15,8 +15,20 @@ class AuthViewController: UIViewController {
     
     @IBOutlet weak var logInButton: UIButton!
     
-    var authController: AuthController!
-    var fireAuthController: UINavigationController?
+    var authController = AuthController()
+    lazy var fireAuthController: UINavigationController = {
+        let authUI = FUIAuth.defaultAuthUI()!
+        authUI.delegate = self
+        authUI.providers = [
+            FUIEmailAuth(),
+            FUIGoogleAuth()
+        ]
+        authUI.shouldHideCancelButton = true
+        let vc = authUI.authViewController()
+        vc.navigationBar.tintColor = .systemPurple
+        vc.title = "Choose Auth Method"
+        return vc
+    }()
     var hud: JGProgressHUD?
     
     override func viewDidLoad() {
@@ -26,17 +38,6 @@ class AuthViewController: UIViewController {
         navigationController?.navigationBar.isHidden = true
         
         logInButton.layer.cornerRadius = 10
-        
-        let authUI = FUIAuth.defaultAuthUI()!
-        authUI.delegate = self
-        authUI.providers = [
-            FUIEmailAuth(),
-            FUIGoogleAuth()
-        ]
-        authUI.shouldHideCancelButton = true
-        fireAuthController = authUI.authViewController()
-        fireAuthController?.navigationBar.tintColor = .systemPurple
-        fireAuthController?.title = "Choose Auth Method"
         
         guard let user = authController.currentUser else {
             return
@@ -72,16 +73,17 @@ class AuthViewController: UIViewController {
     }
     
     @IBAction func logIn(_ sender: Any) {
-        present(fireAuthController!, animated: true, completion: nil)
+        present(fireAuthController, animated: true, completion: nil)
     }
 }
 
 // MARK:- firebase auth ui delegates
 extension AuthViewController: FUIAuthDelegate {
     func authUI(_ authUI: FUIAuth, didSignInWith authDataResult: AuthDataResult?, error: Error?) {
-        fireAuthController?.dismiss(animated: true) {
-            self.fireAuthController?.popToRootViewController(animated: false)
-        }
+//        fireAuthController.dismiss(animated: true) {
+//
+//        }
+        self.fireAuthController.popToRootViewController(animated: false)
         authComplete(authDataResult, error)
     }
 }

@@ -73,7 +73,8 @@ class ChecklistViewController: UITableViewController {
     func loadData() {
         showIndicator(for: .loading)
         dataController.getListItems(in: checklist.listID) { [weak self] state in
-            self?.showIndicator(for: state)
+            self?.hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+            self?.hud?.dismiss(afterDelay: 0.7, animated: true)
             if case DataState.success(let items as [ChecklistItem]) = state {
                 self?.items = items
                 self?.tableView.reloadSections([0], with: .automatic)

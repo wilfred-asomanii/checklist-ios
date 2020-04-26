@@ -86,7 +86,8 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
     func saveList(_ list: Checklist) {
         showIndicator(for: .loading)
         dataController.setList(list) { [weak self] state in
-            self?.showIndicator(for: state)
+            self?.hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
+            self?.hud?.dismiss(afterDelay: 0.7, animated: true)
             guard case DataState.success(_) = state else { return }
             guard let self = self else { return }
             self.dismiss(animated: true, completion: nil)
@@ -100,7 +101,7 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
     
     fileprivate func showIndicator(for state: DataState) {
         hud?.dismiss()
-        hud = HudView.showIndicator(for: state, in: view)
+        hud = HudView.showIndicator(for: state, in: presentingViewController!.view)
     }
     
     // MARK:- IBActions
