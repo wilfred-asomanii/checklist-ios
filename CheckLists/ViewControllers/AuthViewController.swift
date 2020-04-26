@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 class AuthViewController: UIViewController {
     
@@ -17,6 +18,7 @@ class AuthViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     
     var authController: AuthController!
+    var hud: JGProgressHUD?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,17 +51,17 @@ class AuthViewController: UIViewController {
     }
     
     func authComplete(_ result: AuthDataResult?, _ error: Error?) {
+        hud?.dismiss()
         guard error == nil else {
-            let alert = UIAlertController(title: "Oops", message: "Could not sign you in", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            present(alert, animated: true, completion: nil)
+                        hud = HudView.showIndicator(for: .error(error), in: view)
             return
         }
-        
+        hud = HudView.showIndicator(for: .success(nil), in: view)
         self.navigateToMain(for: result!.user)
     }
     
     @IBAction func logIn(_ sender: Any) {
+        hud = HudView.showIndicator(for: .loading, in: view)
         authController.signIn(withEmail: emailField.text!, password: passwordField.text!) {
             [weak self] result, err in
             self?.authComplete(result, err)

@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseFirestore
+import JGProgressHUD
 
 typealias DidAction = (_ isDelete:Bool,Checklist) -> Void
 class ChecklistViewController: UITableViewController {
@@ -18,8 +19,8 @@ class ChecklistViewController: UITableViewController {
     var items = [ChecklistItem]()
     var item: ChecklistItem? // this will be passed if a notification of said item is tapped
     var dataController: DataController!
-    var hud: HudView?
-    
+    var hud: JGProgressHUD?
+
     // MARK:- view controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,13 +91,8 @@ class ChecklistViewController: UITableViewController {
     }
     
     fileprivate func showIndicator(for state: DataState) {
-        hud?.removeFromSuperview()
-        guard let navigationController = navigationController else { return }
-        hud = HudView.hud(inView: navigationController.view,
-                          animated: true, state: state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.hud?.hide()
-        }
+        hud?.dismiss()
+        hud = HudView.showIndicator(for: state, in: view)
     }
     
     func removeItem(at path: IndexPath) {

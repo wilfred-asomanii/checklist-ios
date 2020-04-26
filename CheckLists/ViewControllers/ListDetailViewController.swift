@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 
 typealias DidFinishSaving = (Checklist) -> Void
 
@@ -20,8 +21,8 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
     var didFinishSaving: DidFinishSaving?
     var checklist: Checklist?
     var iconName = "No Icon"
-    var hud: HudView?
-    
+    var hud: JGProgressHUD?
+
     // MARK:- view controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,12 +99,8 @@ class ListDetailViewController: UITableViewController, UITextFieldDelegate {
     }
     
     fileprivate func showIndicator(for state: DataState) {
-        hud?.removeFromSuperview()
-        hud = HudView.hud(inView: presentingViewController!.view,
-                          animated: true, state: state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.hud?.hide()
-        }
+        hud?.dismiss()
+        hud = HudView.showIndicator(for: state, in: view)
     }
     
     // MARK:- IBActions

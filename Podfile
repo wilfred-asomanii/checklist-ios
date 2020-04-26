@@ -6,6 +6,7 @@ target 'CheckLists' do
   use_frameworks!
 
   # Pods for CheckLists
+  pod 'JGProgressHUD', '~> 2.1'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
   pod 'FirebaseFirestoreSwift'

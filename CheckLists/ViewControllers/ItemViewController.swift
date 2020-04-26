@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 
 typealias DidFinishSavingItem = (ChecklistItem, Checklist) -> Void
 
@@ -27,7 +28,7 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     var dataController: DataController!
     var dueDate = Date()
     var isDatePickerVisible = false
-    var hud: HudView?
+    var hud: JGProgressHUD?
     
     var didFinishSaving: DidFinishSavingItem?
     
@@ -190,12 +191,8 @@ class ItemViewController: UITableViewController, UITextFieldDelegate {
     }
     
     fileprivate func showIndicator(for state: DataState) {
-        hud?.removeFromSuperview()
-        hud = HudView.hud(inView: presentingViewController!.view,
-                          animated: true, state: state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.hud?.hide()
-        }
+        hud?.dismiss()
+        hud = HudView.showIndicator(for: state, in: view)
     }
     
     // MARK:- IBActions

@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 import FirebaseFirestore
+import JGProgressHUD
 
 class AllListsViewController: UITableViewController, UINavigationControllerDelegate,
 UISearchResultsUpdating {
@@ -24,7 +25,7 @@ UISearchResultsUpdating {
     var dataController: DataController!
     var checklists = [Checklist]()
     var openRow: Int?
-    var hud: HudView?
+    var hud: JGProgressHUD?
     
     let searchResController = SearchViewController()
     
@@ -171,14 +172,10 @@ UISearchResultsUpdating {
         guard let path = sender as? IndexPath else { return }
         controller.checklist = checklists[path.row]
     }
-    
+
     fileprivate func showIndicator(for state: DataState) {
-        hud?.removeFromSuperview()
-        hud = HudView.hud(inView: navigationController!.view,
-                          animated: true, state: state)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.hud?.hide()
-        }
+        hud?.dismiss()
+        hud = HudView.showIndicator(for: state, in: view)
     }
     
     func removeList(at path: IndexPath) {
@@ -187,8 +184,7 @@ UISearchResultsUpdating {
         self.tableView.deleteRows(at: [path], with: .left)
     }
     
-    func swipeActionTapped(_ action: UIContextualAction, _ view: UIView,
-                           _ list: Checklist, _ handler: (Bool) -> Void) {
+    func swipeActionTapped(_ action: UIContextualAction, _ view: UIView, _ list: Checklist, _ handler: (Bool) -> Void) {
         let title = action.title ?? ""
         
         guard let row = checklists.firstIndex(of: list) else { return }
