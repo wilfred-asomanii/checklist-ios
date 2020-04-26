@@ -36,7 +36,7 @@ class AuthViewController: UIViewController {
         authUI.shouldHideCancelButton = true
         fireAuthController = authUI.authViewController()
         fireAuthController?.navigationBar.tintColor = .systemPurple
-        fireAuthController?.navigationItem.title = "Choose Auth Method"
+        fireAuthController?.title = "Choose Auth Method"
         
         guard let user = authController.currentUser else {
             return
