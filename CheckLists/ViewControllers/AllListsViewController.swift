@@ -11,7 +11,7 @@ import UserNotifications
 import FirebaseFirestore
 import JGProgressHUD
 
-class AllListsViewController: UITableViewController, UINavigationControllerDelegate,
+class AllListsViewController: UITableViewController,
 UISearchResultsUpdating {
     
     // MARK:- variables
@@ -28,7 +28,8 @@ UISearchResultsUpdating {
     var hud: JGProgressHUD?
     
     let searchResController = SearchViewController()
-    var previewController: UIViewController?
+    var previewController: ChecklistViewController?
+    var previewRow: Int?
     
     // MARK:- View controller methods
     override func viewDidLoad() {
@@ -82,8 +83,8 @@ UISearchResultsUpdating {
         }
     }
     
+    // MARK: search stuff
     func initSearch() {
-        // search controller stuff
         searchResController.cellTapped = { list in
             guard let index = self.checklists.firstIndex(of: list) else { return }
             let path = IndexPath(row: index, section: 0)
@@ -174,7 +175,7 @@ UISearchResultsUpdating {
         guard let path = sender as? IndexPath else { return }
         controller.checklist = checklists[path.row]
     }
-
+    
     fileprivate func showIndicator(for state: DataState) {
         hud?.dismiss()
         hud = HudView.showIndicator(for: state, in: view)
@@ -275,6 +276,11 @@ extension AllListsViewController {
         return 80
     }
     
+}
+
+// MARK: previewing stuff
+extension AllListsViewController {
+    
     @available(iOS 13.0, *)
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
@@ -283,6 +289,7 @@ extension AllListsViewController {
         if list.totalItems > 0 {
             provider = {
                 self.previewController = self.previewProvider(for: indexPath)
+                self.previewRow = indexPath.row
                 return self.previewController
             }
         } else {
@@ -303,16 +310,21 @@ extension AllListsViewController {
         _ tableView: UITableView, willPerformPreviewActionForMenuWith
         configuration: UIContextMenuConfiguration,
         animator: UIContextMenuInteractionCommitAnimating) {
-       
+        
+        guard let id = configuration.identifier as? String,
+            let row = Int(id) else { return }
+        openRow = row
         animator.addCompletion {
-            guard let controller = self.previewController else { return }
+            guard let controller = self.previewController,
+                row == self.previewRow else {
+                    self.performSegue(withIdentifier: "showChecklistSegue", sender: self.checklists[row])
+                    return
+            }
             self.navigationController?.pushViewController(controller, animated: true)
         }
     }
     
-    // MARK:- previewing stuff
-    
-    func previewProvider(for path: IndexPath) -> UIViewController {
+    func previewProvider(for path: IndexPath) -> ChecklistViewController {
         let controller = storyboard!.instantiateViewController(withIdentifier: "CheckListViewController") as! ChecklistViewController
         controller.dataController = dataController
         controller.checklist = checklists[path.row]
