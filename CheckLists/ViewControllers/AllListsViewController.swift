@@ -245,8 +245,6 @@ extension AllListsViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        //        performSegue(withIdentifier: "showChecklistSegue", sender: checklists[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

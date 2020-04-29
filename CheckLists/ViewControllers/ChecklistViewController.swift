@@ -23,13 +23,8 @@ class ChecklistViewController: UIViewController {
     var dataController: DataController!
     var hud: JGProgressHUD?
     
-    private let itemData = ItemsData()
-    private lazy var dataSource: ItemsTableDataSource = {
-        let dS = ItemsTableDataSource(itemData: itemData, in: checklist, dataController: dataController)
-        return dS
-    }()
-    private lazy var delegate: ItemsTableDelegate = {
-        let dS = ItemsTableDelegate(itemData: itemData, in: checklist, dataController: dataController)
+    private lazy var dataSource: ChecklistItemsDataSource = {
+        let dS = ChecklistItemsDataSource(for: checklist, dataController: dataController)
         
         dS.itemRemoved = { [weak self] path in
             self?.tableView.deleteRows(at: [path], with: .left) }
@@ -47,10 +42,10 @@ class ChecklistViewController: UIViewController {
         navigationItem.rightBarButtonItems?.append(editButtonItem)
 
         tableView.tableFooterView = UIView()
-        tableView.register(RemindItemCell.self, forCellReuseIdentifier: ItemsData.remindCellID)
-        tableView.register(ItemCell.self, forCellReuseIdentifier: ItemsData.cellID)
+        tableView.register(RemindItemCell.self, forCellReuseIdentifier: ChecklistItemsDataSource.remindCellID)
+        tableView.register(ItemCell.self, forCellReuseIdentifier: ChecklistItemsDataSource.cellID)
         self.tableView.dataSource = self.dataSource
-        self.tableView.delegate = self.delegate
+        self.tableView.delegate = self.dataSource
         
         guard let checklist = checklist else {
             navigationController?.popViewController(animated: true)
@@ -80,10 +75,10 @@ class ChecklistViewController: UIViewController {
         let controller = navController.topViewController as! ItemViewController
         controller.didFinishSaving = { [weak self] item, _ in
             guard let self = self else { return }
-            guard let index = self.itemData.items.firstIndex(of: item) else {
+            guard let index = self.dataSource.items.firstIndex(of: item) else {
                 // add
-                let path = IndexPath(row: self.itemData.items.count, section: 0)
-                self.itemData.items.append(item)
+                let path = IndexPath(row: self.dataSource.items.count, section: 0)
+                self.dataSource.items.append(item)
                 self.tableView.insertRows(at: [path], with: .bottom)
                 return
             }
@@ -95,7 +90,7 @@ class ChecklistViewController: UIViewController {
         // in this case, the triger of the segue is a cell
         if let cell = sender as? UITableViewCell,
             let indexPath = tableView.indexPath(for: cell) {
-            controller.itemToEdit = itemData.items[indexPath.row]
+            controller.itemToEdit = dataSource.items[indexPath.row]
         }
     }
     
@@ -105,8 +100,8 @@ class ChecklistViewController: UIViewController {
             self?.hud?.indicatorView = JGProgressHUDSuccessIndicatorView()
             self?.hud?.dismiss(afterDelay: 0.7, animated: true)
             if case DataState.success(let items as [ChecklistItem]) = state {
-                self?.itemData.items = items
-                self?.itemData.items = items
+                self?.dataSource.items = items
+                self?.dataSource.items = items
                 self?.tableView.reloadSections([0], with: .automatic)
                 
                 // briefly highlight listItem if one was passed

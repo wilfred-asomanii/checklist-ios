@@ -9,75 +9,54 @@
 import Foundation
 import UIKit
 
-class ItemsData {
+class ChecklistItemsDataSource: NSObject, UITableViewDataSource {
     static let remindCellID = "remindListItem"
     static let cellID = "listItem"
     var items = [ChecklistItem]()
-}
-
-class ItemsTableDataSource: NSObject, UITableViewDataSource {
-    var itemData: ItemsData
     let dataController: DataController
     let checklist: Checklist
+    
+    var itemRemoved: ((IndexPath) -> Void)?
+    var editTapped: ((IndexPath) -> Void)?
         
-    init(itemData: ItemsData, in checklist: Checklist, dataController: DataController) {
-        self.itemData = itemData
+    init(for checklist: Checklist, dataController: DataController) {
         self.dataController = dataController
         self.checklist = checklist
         super.init()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemData.items.count
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let item = itemData.items[indexPath.row]
+        let item = items[indexPath.row]
         guard item.shouldRemind else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ItemsData.cellID, for: indexPath) as! ItemCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: ChecklistItemsDataSource.cellID, for: indexPath) as! ItemCell
             cell.configure(with: item)
             return cell
         }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: ItemsData.remindCellID, for: indexPath) as! RemindItemCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ChecklistItemsDataSource.remindCellID, for: indexPath) as! RemindItemCell
         cell.configure(with: item)
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if case UITableViewCell.EditingStyle.delete = editingStyle {
-            let deletedItem = self.itemData.items.remove(at: indexPath.row)
+            let deletedItem = self.items.remove(at: indexPath.row)
             dataController.removeListItem(deletedItem, in: checklist)
             tableView.deleteRows(at: [indexPath], with: .left)
         }
     }
-    
-    func removeItem(at path: IndexPath) {
-        
-    }
-    
 }
 
-class ItemsTableDelegate: NSObject, UITableViewDelegate {
-    
-    var itemData: ItemsData
-    let dataController: DataController
-    let checklist: Checklist
-    
-    var itemRemoved: ((IndexPath) -> Void)?
-    var editTapped: ((IndexPath) -> Void)?
-    
-    init(itemData: ItemsData, in checklist: Checklist, dataController: DataController) {
-        self.itemData = itemData
-        self.dataController = dataController
-        self.checklist = checklist
-        super.init()
-    }
+extension ChecklistItemsDataSource: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let _ = tableView.cellForRow(at: indexPath) {
-            let item = itemData.items[indexPath.row]
+            let item = items[indexPath.row]
             if !item.isChecked && item.shouldRemind {
                 // task is completed but there's still a notification for it so remove
                 item.shouldRemind = false
@@ -108,7 +87,7 @@ class ItemsTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return itemData.items[indexPath.row].shouldRemind ? 80 : 70
+        return items[indexPath.row].shouldRemind ? 80 : 70
     }
     
     func swipeActionTapped(action: UIContextualAction, view: UIView, handler: @escaping (Bool) -> Void, indexPath: IndexPath) {
@@ -123,7 +102,7 @@ class ItemsTableDelegate: NSObject, UITableViewDelegate {
     }
     
     func removeItem(at path: IndexPath) {
-        let deletedItem = self.itemData.items.remove(at: path.row)
+        let deletedItem = self.items.remove(at: path.row)
         dataController.removeListItem(deletedItem, in: checklist)
         itemRemoved?(path)
     }
