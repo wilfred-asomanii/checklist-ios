@@ -21,7 +21,9 @@
 		437B513A243FF3D1001EC7BF /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437B5139243FF3D1001EC7BF /* DataController.swift */; };
 		438E6A3A2453839800B3043D /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 438E6A392453839800B3043D /* ProfileViewController.swift */; };
 		438E6A3D245386E300B3043D /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 438E6A3C245386E300B3043D /* AuthController.swift */; };
+		43966D6D2459D056008FEC74 /* IconsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43966D6C2459D056008FEC74 /* IconsDataSource.swift */; };
 		43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B64F50243D4BEB00D313EA /* ItemViewController.swift */; };
+		43C3E08F2458FDD600AD6262 /* ChecklistItemsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C3E08E2458FDD600AD6262 /* ChecklistItemsDataSource.swift */; };
 		43D2237E2440828000EB0AD9 /* IconPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */; };
 		43F4DCEC244CA83800865B81 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 43F4DCEB244CA83800865B81 /* GoogleService-Info.plist */; };
 		43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43FD7EBB243CC52D006FAAB1 /* AppDelegate.swift */; };
@@ -47,7 +49,9 @@
 		437B5139243FF3D1001EC7BF /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		438E6A392453839800B3043D /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		438E6A3C245386E300B3043D /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
+		43966D6C2459D056008FEC74 /* IconsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconsDataSource.swift; sourceTree = "<group>"; };
 		43B64F50243D4BEB00D313EA /* ItemViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewController.swift; sourceTree = "<group>"; };
+		43C3E08E2458FDD600AD6262 /* ChecklistItemsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChecklistItemsDataSource.swift; sourceTree = "<group>"; };
 		43D2237D2440828000EB0AD9 /* IconPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerViewController.swift; sourceTree = "<group>"; };
 		43F4DCEB244CA83800865B81 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		43FD7EB8243CC52D006FAAB1 /* CheckLists.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheckLists.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +101,7 @@
 		4384B23924402125000A5CED /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				43C3E08D2458FC7400AD6262 /* TableData */,
 				437B5131243F8599001EC7BF /* AllListsViewController.swift */,
 				43FD7EBF243CC52D006FAAB1 /* ChecklistViewController.swift */,
 				43B64F50243D4BEB00D313EA /* ItemViewController.swift */,
@@ -143,6 +148,15 @@
 				4365DBFD2454AF5900C69865 /* TableViewExtensions.swift */,
 			);
 			path = helpers;
+			sourceTree = "<group>";
+		};
+		43C3E08D2458FC7400AD6262 /* TableData */ = {
+			isa = PBXGroup;
+			children = (
+				43C3E08E2458FDD600AD6262 /* ChecklistItemsDataSource.swift */,
+				43966D6C2459D056008FEC74 /* IconsDataSource.swift */,
+			);
+			path = TableData;
 			sourceTree = "<group>";
 		};
 		43FD7EAF243CC52C006FAAB1 = {
@@ -322,6 +336,7 @@
 			files = (
 				43FD7EC0243CC52D006FAAB1 /* ChecklistViewController.swift in Sources */,
 				438E6A3D245386E300B3043D /* AuthController.swift in Sources */,
+				43C3E08F2458FDD600AD6262 /* ChecklistItemsDataSource.swift in Sources */,
 				43B64F51243D4BEB00D313EA /* ItemViewController.swift in Sources */,
 				43610E9524547F0200601368 /* ListCell.swift in Sources */,
 				4351694F245500A80052E48A /* SearchViewController.swift in Sources */,
@@ -332,6 +347,7 @@
 				438E6A3A2453839800B3043D /* ProfileViewController.swift in Sources */,
 				43FD7ED0243CDDE6006FAAB1 /* Checklist.swift in Sources */,
 				43FD7EBC243CC52D006FAAB1 /* AppDelegate.swift in Sources */,
+				43966D6D2459D056008FEC74 /* IconsDataSource.swift in Sources */,
 				437B5138243FC225001EC7BF /* ListDetailViewController.swift in Sources */,
 				437B513A243FF3D1001EC7BF /* DataController.swift in Sources */,
 				43610E9924547FAF00601368 /* RemindItemCell.swift in Sources */,
